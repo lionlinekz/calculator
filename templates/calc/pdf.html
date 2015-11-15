@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Profit calculation app</title>
+        {% load staticfiles %}
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet">
+            <style type="text/css">
+            @page {
+                size: {{ pagesize }};
+                margin: 1cm;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 9cm;
+                    margin-right: 9cm;
+                    height: 1cm;
+                }
+            }
+        </style>
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+ 
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+	  <br><br>
+        <div class="col-xs-12  main">
+	        <div class="table-responsive">
+	            <table class="table table-bordered">
+	              <thead>
+	                <tr>
+	                  <th>Stage</th>
+	                  <th>Item No.</th>
+	                  <th width="20%">Task Description</th>
+	                  <th>Costs Estimated</th>
+	                  <th>Costs Quoted</th>
+					  <th>Hihgest Quote</th>
+	                  <th>Expense Incurred</th>
+	                  <th>Expense Incurred</th>
+	                  <th>Invoice No.</th>
+	                  <th width="12%">Trade Contractor</th>
+					  <th>Contractor Paid</th>
+	                  <th width="7%">Paid Date</th>
+	                  <th>Allocation</th>
+					  <th>Task Complete</th>
+					  <th>Under Quote By</th>
+					  <th>Under Quote By</th>
+	                  <th>Expense Future Calculator</th>
+	                  <th>Expense Future</th>
+					  <th>Infront of Cost Estimate By</th>
+					  <th>Client Charged</th>
+	                  <th>Payment Received</th>
+	                  <th width="5%">Payment Date</th>
+	                </tr>
+	              </thead>
+	              <tbody>
+	              	{% for task in tasks %}
+	                <tr>
+	                  <td class="info"><strong>{{ task.stage }}</strong></td>
+	                  <td class="info"><strong>{{ task.item_no }}</strong></td>
+	                  <td class="info"><strong>{{ task.task_name }} </strong></td>
+	                  <td class="warning"><strong>{{ task.costs_estimated }}</strong></td>
+	                  <td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
+					  <td class="warning"><strong>{{ task.highest_quote}}</strong></td>
+	                  <td class="info"><strong>{{ task.expense_incurred }}</strong></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="warning"><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
+					  <td class="{% if task.under_quote_by < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
+					  <td class="{% if task.under_quote_by2 < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by2 }}</strong></td>
+					  <td class="{% if task.expense_future_calculator < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future_calculator }}</strong></td>
+					  <td class="{% if task.expense_future < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future }}</strong></td>
+					  <td class="{% if task.infront_cost < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.infront_cost }}</strong></td>
+					  <td class="warning"><strong>{{ task.client_charged }}</strong></td>
+					  <td class="warning"><strong>{{ task.payment_received }}</strong></td>
+
+					  <td class="warning"><strong>{{ task.payment_date }}</strong></td></b>
+	                </tr>
+	                	{% for task_item in task_items %}
+	                		{% if task_item.task ==  task %}
+			                <tr>
+			                  
+
+			                  <td class="active"></td>
+
+			                  <td>{{ task_item.item_no }}</td>
+			                  <td>{{ task_item.item_name }}</td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="warning">{{ task_item.expense_incurred }}</td>
+							  <td class="warning">{{ task_item.invoice_no }}</td>
+							  <td class="warning">{{ task_item.trade_contractor }}</td>
+							  <td class="warning">{{ task_item.contractor_paid }}</td>
+							  <td class="warning">{{ task_item.contractor_paid_date }}</td>
+							  <td class="warning">{{ task_item.allocation }}</td>
+			                  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+			                </tr>
+			                {% endif %}
+	                	{% endfor %}
+	                {% endfor %}
+
+	              </tbody>
+	            </table>
+	        </div>
+   		 </div>
+	</div>
+</div>
+			<!-- Button trigger modal -->
+
+
+
+
+  </body>
+</html>

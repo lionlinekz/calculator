@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Profit calculation app</title>
+        {% load staticfiles %}
+
+<link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEBAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQEBAQEBAQEBAAEAAQABAAAAAAAAAAAAAQABAAEAAQEBAQEBAQEBAQEAAQABAAAAAAAAAAAAAAAAAAEAAQEBAQEBAQEBAQEBAQEBAAABAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAQAUAAF/1AABABQAAf/0AAAABAAA=" rel="icon" type="image/x-icon" />
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'dashboard.css' %}" rel="stylesheet">
+            <style type="text/css">
+            @page {
+                size: {{ pagesize }};
+                margin: 1cm;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 9cm;
+                    margin-right: 9cm;
+                    height: 1cm;
+                }
+            }
+        </style>
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+		  {% if is_admin or is_input %} 
+          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+ Add task</a>
+		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+ Add item</a>
+		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> export to pdf</a>
+
+		  {% endif %} 
+
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/0/">Page1</a></li>
+            <li><a href="/1/">Page2</a></li>
+            <li><a href="/2/">Page3</a></li>
+            <li><a href="/3/">Page4</a></li>
+			<li><a href="/4/">Page5</a></li>
+			<li><a href="/logout/">Log out</a></li>
+          </ul>
+		  <div id="search">
+			  <form class="navbar-form navbar-right">
+				<input  id ="keywords" type="text" class="form-control" placeholder="Search...">
+			  </form>
+		  </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+	  <br><br>
+        <div class="col-xs-12  main">
+	        <div class="table-responsive">
+	            <table class="table">
+	              <thead>
+	                <tr>
+	                  {% if is_admin  %} <th></th> {% endif %}
+	                  <th>Stage</th>
+	                  <th>Item No.</th>
+	                  <th width="20%">Task Description</th>
+	                  <th>Costs Estimated</th>
+	                  <th>Costs Quoted</th>
+					  <th>Hihgest Quote</th>
+	                  <th>Expense Incurred</th>
+	                  <th>Expense Incurred</th>
+	                  <th>Invoice No.</th>
+	                  <th width="12%">Trade Contractor</th>
+					  <th>Contractor Paid</th>
+	                  <th width="7%">Paid Date</th>
+	                  <th>Allocation</th>
+					  <th>Task Complete</th>
+					  <th>Under Quote By</th>
+					  <th>Under Quote By</th>
+	                  <th>Expense Future Calculator</th>
+	                  <th>Expense Future</th>
+					  <th>Infront of Cost Estimate By</th>
+					  <th>Client Charged</th>
+	                  <th>Payment Received</th>
+	                  <th width="5%">Payment Date</th>
+	                </tr>
+	              </thead>
+	              <tbody>
+	              	{% for task in tasks %}
+	                <tr>
+	                    {% if is_admin  %}<td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a></td>{% endif %}
+	                  <td class="info"><strong>{{ task.stage }}</strong></td>
+	                  <td class="info"><strong>{{ task.item_no }}</strong></td>
+	                  <td class="info"><strong>{{ task.task_name }} </strong></td>
+	                  <td class="warning"><strong>{{ task.costs_estimated }}</strong></td>
+	                  <td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
+					  <td class="warning"><strong>{{ task.highest_quote}}</strong></td>
+	                  <td class="info"><strong>{{ task.expense_incurred }}</strong></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="active"></td>
+					  <td class="warning"><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
+					  <td class="{% if task.under_quote_by < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
+					  <td class="{% if task.under_quote_by2 < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by2 }}</strong></td>
+					  <td class="{% if task.expense_future_calculator < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future_calculator }}</strong></td>
+					  <td class="{% if task.expense_future < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future }}</strong></td>
+					  <td class="{% if task.infront_cost < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.infront_cost }}</strong></td>
+					  <td class="warning"><strong>{{ task.client_charged }}</strong></td>
+					  <td class="warning"><strong>{{ task.payment_received }}</strong></td>
+
+					  <td class="warning"><strong>{{ task.payment_date }}</strong></td></b>
+	                </tr>
+	                {% if is_admin or is_input or is_view_all  %}
+	                	{% for task_item in task_items %}
+	                		{% if task_item.task ==  task %}
+			                <tr>
+			                  
+			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a> </td>{% endif %}
+			                  <td class="active"></td>
+
+			                  <td>{{ task_item.item_no }}</td>
+			                  <td>{{ task_item.item_name }}</td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="warning">{{ task_item.expense_incurred }}</td>
+							  <td class="warning">{{ task_item.invoice_no }}</td>
+							  <td class="warning">{{ task_item.trade_contractor }}</td>
+							  <td class="warning">{{ task_item.contractor_paid }}</td>
+							  <td class="warning">{{ task_item.contractor_paid_date }}</td>
+							  <td class="warning">{{ task_item.allocation }}</td>
+			                  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+							  <td class="active"></td>
+			                </tr>
+			                {% endif %}
+	                	{% endfor %}
+	                	{% endif %}
+	                {% endfor %}
+
+	              </tbody>
+	            </table>
+	        </div>
+   		 </div>
+	</div>
+</div>
+			<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add task</h4>
+      </div>
+	  <form  action="/{{ number }}/add_task/" method="post">
+	  	  {% csrf_token %}
+      <div class="modal-body">
+       
+		  <div class="form-group">
+			<label for="Stage">Stage</label>
+			<input type="text" class="form-control" name="stage" value="General">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Task Number</label>
+			<input type="text" class="form-control" name="task_number" value="1.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Task name</label>
+			<input type="text" class="form-control" name="task_name">
+		  </div>
+		  		  		  <div class="form-group">
+			<label for="Stage">Cost Estimated</label>
+			<input type="text" class="form-control" name="cost_estimated" value="0.00">
+		  </div>
+
+		  		  <div class="form-group">
+			<label for="Stage">Cost Quoted</label>
+			<input type="text" class="form-control" name="cost_quoted" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Highest Quote</label>
+			<input type="text" class="form-control" name="highest_quote" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Client Charged</label>
+			<input type="text" class="form-control" name="client_charged" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Payment Received</label>
+			<input type="text" class="form-control" name="payment_received" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Payment Date</label>
+			<input type="Date" class="form-control" name="payment_date">
+		  </div>		 
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+	  </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add item</h4>
+      </div>
+	  <form  action="/{{ number }}/add_item/" method="post">
+	  	  {% csrf_token %}
+      <div class="modal-body">
+       
+		  <div class="form-group">
+			<label for="Stage">Task</label>
+			<select  class="form-control"  name="task">
+				{% for task in tasks %}
+				  <option value="{{ task.id }}">{{ task.task_name }}</option>
+			 	{% endfor %}
+			</select>
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Item Number</label>
+			<input type="text" class="form-control" name="item_number" placeholder="1.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Item name</label>
+			<input type="text" class="form-control" name="item_name">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Expense Incurred</label>
+			<input type="text" class="form-control" name="expense_incurred" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Invoice Number</label>
+			<input type="text" class="form-control" name="invoice_number" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Trade Contractor</label>
+			<input type="text" class="form-control" name="trade_contractor" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Contractor Paid</label>
+			<input type="text" class="form-control" name="contractor_paid" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Contractor Paid Date</label>
+			<input type="Date" class="form-control" name="contractor_paid_date">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Allocation</label>
+			<input type="text" class="form-control" name="allocation" value="0.00">
+		  </div>
+		 
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+	  </form>
+    </div>
+  </div>
+</div>
+   <!-- Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="myModalLabel">Edit task</h4>
+			      </div>
+				  <form  action="/{{ number }}/edit_task/" method="post">
+				  	  {% csrf_token %}
+			      <div class="modal-body">
+			       
+			       	<div class="form-group">
+						<input type="hidden" class="form-control" name="task_id" value="">
+					  </div>
+					  <div class="form-group">
+						<label for="Stage">Stage</label>
+						<input type="text" class="form-control" name="stage" value="">
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Task Number</label>
+						<input type="text" class="form-control" name="task_number" value="1.00">
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Task name</label>
+						<input type="text" class="form-control" name="task_name">
+					  </div>
+					  		  		  <div class="form-group">
+						<label for="Stage">Cost Estimated</label>
+						<input type="text" class="form-control" name="cost_estimated" value="0.00">
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Cost Quoted</label>
+						<input type="text" class="form-control" name="cost_quoted" value="0.00">
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Highest Quote</label>
+						<input type="text" class="form-control" name="highest_quote" value="0.00">
+					  </div>
+
+					  <div class="form-group">
+						<label for="Stage">Task completed</label>
+						<select  class="form-control"  name="task_completed">
+							  <option value="1">OPEN</option>
+							  <option value="2">CLOSED</option>
+						</select>
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Client Charged</label>
+						<input type="text" class="form-control" name="client_charged" value="0.00">
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Payment Received</label>
+						<input type="text" class="form-control" name="payment_received" value="0.00">
+					  </div>
+					  		  <div class="form-group">
+						<label for="Stage">Payment Date</label>
+						<input type="Date" class="form-control" name="payment_date">
+					  </div>		 
+					
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="submit" class="btn btn-primary">Save</button>
+			      </div>
+				  </form>
+			    </div>
+			  </div>
+</div>
+
+   <!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="myModalLabel">Edit item</h4>
+			      </div>
+				  <form  action="/{{ number }}/edit_item/" method="post">
+				  	  {% csrf_token %}
+			      <div class="modal-body">
+			       
+
+		  <div class="form-group">
+			<input type="hidden" class="form-control" name="item_id" >
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Item Number</label>
+			<input type="text" class="form-control" name="item_number" placeholder="1.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Item name</label>
+			<input type="text" class="form-control" name="item_name">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Expense Incurred</label>
+			<input type="text" class="form-control" name="expense_incurred" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Invoice Number</label>
+			<input type="text" class="form-control" name="invoice_number" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Trade Contractor</label>
+			<input type="text" class="form-control" name="trade_contractor" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Contractor Paid</label>
+			<input type="text" class="form-control" name="contractor_paid" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Contractor Paid Date</label>
+			<input type="Date" class="form-control" name="contractor_paid_date">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Allocation</label>
+			<input type="text" class="form-control" name="item_allocation" value="0.00">
+		  </div>
+					
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="submit" class="btn btn-primary">Save</button>
+			      </div>
+				  </form>
+			    </div>
+			  </div>
+</div>
+
+
+
+
+
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="{% static 'js/vendor/holder.min.js' %}"></script>
+	    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
+	<script src="{% static 'js/hilitor.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+	<script type="text/javascript">
+	  var myHilitor2;
+	  document.addEventListener("DOMContentLoaded", function() {
+		myHilitor2 = new Hilitor("playground");
+		myHilitor2.setMatchType("left");
+	  }, false);
+	  document.getElementById("keywords").addEventListener("keyup", function() {
+		myHilitor2.apply(this.value);
+	  }, false);
+	</script>
+	<script type="text/javascript">
+			$("#editModal").on('show.bs.modal', function(e){
+			var itemId = $(e.relatedTarget).data('item-id');
+			var itemNo = $(e.relatedTarget).data('item-no');
+			var itemName = $(e.relatedTarget).data('item-name');
+			var itemExpeseIncurred = $(e.relatedTarget).data('item-expense-incurred');
+			var itemInvoiceNo = $(e.relatedTarget).data('item-invoice-no');
+			var itemTradeContractor = $(e.relatedTarget).data('item-trade-contractor');
+			var itemContractorPaid = $(e.relatedTarget).data('item-contractor-paid');
+			var itemContractorPaidDate = new Date($(e.relatedTarget).data('item-contractor-paid-date'));
+			var itemAllocation = $(e.relatedTarget).data('item-allocation'); 
+			var itemTaskName = $(e.relatedTarget).data('item-task-name'); 
+			var itemTaskId = $(e.relatedTarget).data('item-task-id'); 
+			var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
+			var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
+			var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
+			$(e.currentTarget).find('input[name="item_id"]').val(itemId);
+			$(e.currentTarget).find('input[name="item_number"]').val(itemNo);
+			$(e.currentTarget).find('input[name="item_name"]').val(itemName);
+			$(e.currentTarget).find('input[name="expense_incurred"]').val(itemExpeseIncurred);
+			$(e.currentTarget).find('input[name="invoice_number"]').val(itemInvoiceNo);
+			$(e.currentTarget).find('input[name="trade_contractor"]').val(itemTradeContractor);
+			$(e.currentTarget).find('input[name="contractor_paid"]').val(itemContractorPaid);
+			$(e.currentTarget).find('input[name="contractor_paid_date"]').val(date);
+			$(e.currentTarget).find('input[name="item_allocation"]').val(itemAllocation);
+		});
+		$("#editTaskModal").on('show.bs.modal', function(e){
+			var taskId = $(e.relatedTarget).data('task-id');
+			var taskStage = $(e.relatedTarget).data('task-stage');
+			var taskNumber = $(e.relatedTarget).data('task-number');
+			var taskName = $(e.relatedTarget).data('task-name');
+			var costEstimated = $(e.relatedTarget).data('task-costs-estimated');
+			var costQuoted = $(e.relatedTarget).data('task-cost-quoted');
+			var highestQuote = $(e.relatedTarget).data('task-highest-quote');
+			var clientCharged = $(e.relatedTarget).data('task-client-charged');
+			var paymentReceived = $(e.relatedTarget).data('task-payment-received'); 
+			var paymentDate = new Date($(e.relatedTarget).data('task-payment-date')); 
+			var day = ("0" + paymentDate.getDate()).slice(-2);
+			var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
+			var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
+			$(e.currentTarget).find('input[name="task_id"]').val(taskId);
+			$(e.currentTarget).find('input[name="stage"]').val(taskStage);
+			$(e.currentTarget).find('input[name="task_number"]').val(taskNumber);
+			$(e.currentTarget).find('input[name="task_name"]').val(taskName);
+			$(e.currentTarget).find('input[name="cost_quoted"]').val(costQuoted);
+			$(e.currentTarget).find('input[name="highest_quote"]').val(highestQuote);
+			$(e.currentTarget).find('input[name="cost_estimated"]').val(costEstimated);
+			$(e.currentTarget).find('input[name="client_charged"]').val(clientCharged);
+			$(e.currentTarget).find('input[name="payment_received"]').val(paymentReceived);
+			$(e.currentTarget).find('input[name="payment_date"]').val(date);
+		});
+	</script>
+  </body>
+</html>
