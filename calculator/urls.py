@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', views.user_logout, name='logout'),
     url(r'^(?P<number>[0-9]+)/pdfView/', views.pdfView, name='pdfView'),
     url(r'^(?P<number>[0-9]+)', views.index, name='index'),
-    url(r'^(?P<default>\w+)', views.default),
- 
+    url(r'^(?P<default>\w+)', views.default), 
+    url(r'^$', views.start),
 # ADD THIS NEW TUPLE!
 )

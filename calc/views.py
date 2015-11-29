@@ -41,6 +41,10 @@ def index(request, number=0):
 
 
 @login_required(login_url='/login/')
+def start(request):
+    return default(request, 0)
+
+@login_required(login_url='/login/')
 def default(request, default):
 	context_dict = {}
 	tasks = Task.objects.filter(site=0)
