@@ -19,10 +19,7 @@ class Task(models.Model):
 	infront_cost = models.FloatField(default=0)
 	client_charged = models.FloatField(default=0)
 	payment_received = models.FloatField(default=0)
-	payment_date = models.DateField()
-
-	class Meta:
-		unique_together = ('task_name', 'item_no')
+	payment_date = models.DateField(default=datetime.now)
 
 	def __unicode__(self):
 		return self.task_name

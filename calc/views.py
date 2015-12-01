@@ -15,6 +15,7 @@ from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.template import Context
 from cgi import escape
+from django.db.models import Sum
 
 
 
@@ -37,6 +38,7 @@ def index(request, number=0):
 		context_dict['is_input'] = is_input
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
+		context_dict.update(summary_header(number))
 	return render(request, 'calc/index.html', context_dict)
 
 
@@ -47,11 +49,6 @@ def start(request):
 @login_required(login_url='/login/')
 def default(request, default):
 	context_dict = {}
-	tasks = Task.objects.filter(site=0)
-	task_items = TaskItem.objects.all()
-	context_dict['tasks'] = tasks
-	context_dict['task_items'] = task_items
-	context_dict['number'] = 0
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -62,7 +59,21 @@ def default(request, default):
 		context_dict['is_input'] = is_input
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
-	return render(request, 'calc/index.html', context_dict)
+		costs_estimated = Task.objects.all().aggregate(Sum('costs_estimated'))
+		costs_quoted = Task.objects.all().aggregate(Sum('costs_quoted'))
+		expense_incurred = Task.objects.all().aggregate(Sum('expense_incurred'))
+		expense_future = Task.objects.all().aggregate(Sum('expense_future'))
+		client_charged = Task.objects.all().aggregate(Sum('client_charged'))
+		payment_received = Task.objects.all().aggregate(Sum('payment_received'))
+		allocations = TaskItem.objects.all().aggregate(Sum('allocation'))
+		context_dict['costs_estimated'] = costs_estimated['costs_estimated__sum']
+		context_dict['costs_quoted'] = costs_quoted['costs_quoted__sum']
+		context_dict['expense_incurred'] = expense_incurred['expense_incurred__sum']
+		context_dict['expense_future'] = expense_future['expense_future__sum']
+		context_dict['client_charged'] = client_charged['client_charged__sum']
+		context_dict['payment_received'] = payment_received['payment_received__sum']
+		context_dict['allocations'] = allocations['allocation__sum']
+	return render(request, 'calc/summary.html', context_dict)
 
 
 @login_required(login_url='/login/')
@@ -306,6 +317,34 @@ def user_logout(request):
 
     # Take the user back to the homepage.
     return HttpResponseRedirect('/0/')
+
+def summary_header(number):
+	context_dict = {}
+	tasks = Task.objects.filter(site=number)
+	task_items = TaskItem.objects.filter(task__site=number)
+	costs_estimated = tasks.aggregate(Sum('costs_estimated'))
+	costs_quoted = tasks.aggregate(Sum('costs_quoted'))
+	expense_incurred = tasks.aggregate(Sum('expense_incurred'))
+	expense_future = tasks.aggregate(Sum('expense_future'))
+	client_charged = tasks.aggregate(Sum('client_charged'))
+	payment_received = tasks.aggregate(Sum('payment_received'))
+	under_quote_by = tasks.aggregate(Sum('under_quote_by'))
+	under_quote_by2 = tasks.aggregate(Sum('under_quote_by2'))
+	expense_future_calculator = tasks.aggregate(Sum('expense_future_calculator'))
+	infront_cost = tasks.aggregate(Sum('infront_cost'))
+	allocations = task_items.aggregate(Sum('allocation'))
+	context_dict['costs_estimated'] = costs_estimated['costs_estimated__sum']
+	context_dict['costs_quoted'] = costs_quoted['costs_quoted__sum']
+	context_dict['expense_incurred'] = expense_incurred['expense_incurred__sum']
+	context_dict['expense_future'] = expense_future['expense_future__sum']
+	context_dict['client_charged'] = client_charged['client_charged__sum']
+	context_dict['payment_received'] = payment_received['payment_received__sum']
+	context_dict['allocations'] = allocations['allocation__sum']
+	context_dict['under_quote_by'] = under_quote_by['under_quote_by__sum']
+	context_dict['under_quote_by2'] = under_quote_by2['under_quote_by2__sum']
+	context_dict['expense_future_calculator'] = expense_future_calculator['expense_future_calculator__sum']
+	context_dict['infront_cost'] = infront_cost['infront_cost__sum']
+	return context_dict
 
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
