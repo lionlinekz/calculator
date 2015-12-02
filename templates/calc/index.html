@@ -87,7 +87,7 @@
 	  <br><br>
         <div class="col-xs-12  main">
 	        <div class="table-responsive">
-	            <table class="table">
+	            <table class="table  table-fixedheader ">
 	              <thead>
 	                <tr>
 	                  {% if is_admin  %} <th></th> {% endif %}
@@ -96,14 +96,13 @@
 	                  <th width="15%">Task Description</th>
 	                  <th>Costs Estimated</th>
 	                  <th>Costs Quoted</th>
-					  <th>Hihgest Quote</th>
+					  <th>Highest Quote</th>
 	                  <th>Expense Incurred</th>
 	                  <th>Expense Incurred</th>
 	                  <th>Invoice No.</th>
 	                  <th width="9%">Trade Contractor</th>
 					  <th>Contractor Paid</th>
 	                  <th width="6%">Paid Date</th>
-	                  <th>Allocation</th>
 					  <th>Task Complete</th>
 					  <th>Under Quote</th>
 					  <th>Under QuoteBy</th>
@@ -113,6 +112,7 @@
 					  <th>Client Charged</th>
 	                  <th>Payment Received</th>
 	                  <th width="6%">Payment Date</th>
+	                  <th>Allocation</th>
 	                </tr>
 	              </thead>
 	              <tbody>
@@ -130,7 +130,6 @@
 					  <td ></td>
 					  <td ></td>
 					  <td ></td>
-					  <td ><strong>{{ allocations }}</strong></td>
 					  <td ><strong></td>
 					  <td ><strong>{{ under_quote_by }}</strong></td>
 					  <td ><strong>{{ under_quote_by2 }}</strong></td>
@@ -141,6 +140,7 @@
 					  <td ><strong>{{ payment_received }}</strong></td>
 
 					  <td ><strong></strong></td></b>
+					  <td ><strong>{{ allocations }}</strong></td>
 	                </tr>
 	              	{% for task in tasks %}
 	                <tr>
@@ -148,11 +148,10 @@
 	                  <td class="info"><strong>{{ task.stage }}</strong></td>
 	                  <td class="info"><strong>{{ task.item_no }}</strong></td>
 	                  <td class="info"><strong>{{ task.task_name }} </strong></td>
-	                  <td class="warning"><strong>{{ task.costs_estimated }}</strong></td>
+	                  <td class="warning"><strong>{{ task.costs_estimated }} <br> <a href="#">edit</a></strong></td>
 	                  <td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
 					  <td class="warning"><strong>{{ task.highest_quote}}</strong></td>
 	                  <td class="info"><strong>{{ task.expense_incurred }}</strong></td>
-					  <td class="active"></td>
 					  <td class="active"></td>
 					  <td class="active"></td>
 					  <td class="active"></td>
@@ -168,6 +167,8 @@
 					  <td class="warning"><strong>{{ task.payment_received }}</strong></td>
 
 					  <td class="warning"><strong>{{ task.payment_date }}</strong></td></b>
+					  					  <td class="active"></td>
+
 	                </tr>
 	                {% if is_admin or is_input or is_view_all  %}
 	                	{% for task_item in task_items %}
@@ -188,7 +189,7 @@
 							  <td class="warning">{{ task_item.trade_contractor }}</td>
 							  <td class="warning">{{ task_item.contractor_paid }}</td>
 							  <td class="warning">{{ task_item.contractor_paid_date }}</td>
-							  <td class="warning">{{ task_item.allocation }}</td>
+							  
 			                  <td class="active"></td>
 							  <td class="active"></td>
 							  <td class="active"></td>
@@ -198,6 +199,7 @@
 							  <td class="active"></td>
 							  <td class="active"></td>
 							  <td class="active"></td>
+							  <td class="warning">{{ task_item.allocation }}</td>
 			                </tr>
 			                {% endif %}
 	                	{% endfor %}
