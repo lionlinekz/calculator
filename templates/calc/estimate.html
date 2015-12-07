@@ -46,9 +46,13 @@
 
   <body>
 
+  <form action="/{{ number }}/estimate/" method="POST">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
-        <div class="navbar-header">
+        
+            {% csrf_token %}
+            
+          <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
@@ -56,12 +60,12 @@
             <span class="icon-bar"></span>
           </button>
 
-		  {% if is_admin or is_input %} 
-          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+ Add task</a>
-		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+ Add item</a>
-		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> export to pdf</a>
-            {{ number }}
-		  {% endif %} 
+
+        
+	        
+
+
+
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -73,11 +77,11 @@
             <li {% if number == '2' %} class="active" {% endif %}><a href="/2/">Unit 3</a></li>
 			<li><a href="/logout/">Log out</a></li>
           </ul>
-		  <div id="search">
-			  <form class="navbar-form navbar-right">
-				<input  id ="keywords" type="text" class="form-control" placeholder="Search...">
-			  </form>
-		  </div>
+
+
+
+
+
         </div>
       </div>
     </nav>
@@ -90,7 +94,7 @@
 	            <table class="table  table-fixedheader ">
 	              <thead>
 	                <tr>
-	                  {% if is_admin  %} <th></th> {% endif %}
+
 	                  <th>Stage</th>
 	                  <th>Item No.</th>
 	                  <th width="15%">Task Description</th>
@@ -117,7 +121,7 @@
 	              </thead>
 	              <tbody>
 	              	<tr class="success">
-	                    {% if is_admin  %}<td></td>{% endif %}
+
 	                  <td ><strong> Summary </strong></td>
 	                  <td ><strong></strong></td>
 	                  <td ><strong> </strong></td>
@@ -144,11 +148,11 @@
 	                </tr>
 	              	{% for task in tasks %}
 	                <tr>
-	                    {% if is_admin  %}<td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a></td>{% endif %}
+
 	                  <td class="info"><strong>{{ task.stage }}</strong></td>
 	                  <td class="info"><strong>{{ task.item_no }}</strong></td>
 	                  <td class="info"><strong>{{ task.task_name }} </strong></td>
-	                  <td class="warning"><strong>{{ task.costs_estimated }} <br> <a href="#">edit</a></strong></td>
+                      <td class="warning"><strong><input type="text" name = "{{ task.id }}" value = "{{ task.costs_estimated }}"></strong></td>
 	                  <td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
 					  <td class="warning"><strong>{{ task.highest_quote}}</strong></td>
 	                  <td class="info"><strong>{{ task.expense_incurred }}</strong></td>
@@ -211,263 +215,10 @@
 	        </div>
    		 </div>
 	</div>
+
+	        <input class="navbar-brand" type="submit" value="Save" />
 </div>
 			<!-- Button trigger modal -->
-
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add task</h4>
-      </div>
-	  <form  action="/{{ number }}/add_task/" method="post">
-	  	  {% csrf_token %}
-      <div class="modal-body">
-       
-		  <div class="form-group">
-			<label for="Stage">Stage</label>
-			<input type="text" class="form-control" name="stage" value="General">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Task Number</label>
-			<input type="text" class="form-control" name="task_number" value="1.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Task name</label>
-			<input type="text" class="form-control" name="task_name">
-		  </div>
-		  		  		  <div class="form-group">
-			<label for="Stage">Cost Estimated</label>
-			<input type="text" class="form-control" name="cost_estimated" value="0.00">
-		  </div>
-
-		  		  <div class="form-group">
-			<label for="Stage">Cost Quoted</label>
-			<input type="text" class="form-control" name="cost_quoted" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Highest Quote</label>
-			<input type="text" class="form-control" name="highest_quote" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Client Charged</label>
-			<input type="text" class="form-control" name="client_charged" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Payment Received</label>
-			<input type="text" class="form-control" name="payment_received" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Payment Date</label>
-			<input type="Date" class="form-control" name="payment_date">
-		  </div>		 
-		
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Add</button>
-      </div>
-	  </form>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add item</h4>
-      </div>
-	  <form  action="/{{ number }}/add_item/" method="post">
-	  	  {% csrf_token %}
-      <div class="modal-body">
-       
-		  <div class="form-group">
-			<label for="Stage">Task</label>
-			<select  class="form-control"  name="task">
-				{% for task in tasks %}
-				  <option value="{{ task.id }}">{{ task.task_name }}</option>
-			 	{% endfor %}
-			</select>
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item Number</label>
-			<input type="text" class="form-control" name="item_number" placeholder="1.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Expense Incurred</label>
-			<input type="text" class="form-control" name="expense_incurred" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid</label>
-			<input type="text" class="form-control" name="contractor_paid" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid Date</label>
-			<input type="Date" class="form-control" name="contractor_paid_date">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Allocation</label>
-			<input type="text" class="form-control" name="allocation" value="0.00">
-		  </div>
-		 
-		
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Add</button>
-      </div>
-	  </form>
-    </div>
-  </div>
-</div>
-   <!-- Modal -->
-<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        <h4 class="modal-title" id="myModalLabel">Edit task</h4>
-			      </div>
-				  <form  action="/{{ number }}/edit_task/" method="post">
-				  	  {% csrf_token %}
-			      <div class="modal-body">
-			       
-			       	<div class="form-group">
-						<input type="hidden" class="form-control" name="task_id" value="">
-					  </div>
-					  <div class="form-group">
-						<label for="Stage">Stage</label>
-						<input type="text" class="form-control" name="stage" value="">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Task Number</label>
-						<input type="text" class="form-control" name="task_number" value="1.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Task name</label>
-						<input type="text" class="form-control" name="task_name">
-					  </div>
-					  		  		  <div class="form-group">
-						<label for="Stage">Cost Estimated</label>
-						<input type="text" class="form-control" name="cost_estimated" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Cost Quoted</label>
-						<input type="text" class="form-control" name="cost_quoted" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Highest Quote</label>
-						<input type="text" class="form-control" name="highest_quote" value="0.00">
-					  </div>
-
-					  <div class="form-group">
-						<label for="Stage">Task completed</label>
-						<select  class="form-control"  name="task_completed">
-							  <option value="1">OPEN</option>
-							  <option value="2">CLOSED</option>
-						</select>
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Client Charged</label>
-						<input type="text" class="form-control" name="client_charged" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Payment Received</label>
-						<input type="text" class="form-control" name="payment_received" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Payment Date</label>
-						<input type="Date" class="form-control" name="payment_date">
-					  </div>		 
-					
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="submit" class="btn btn-primary">Save</button>
-			      </div>
-				  </form>
-			    </div>
-			  </div>
-</div>
-
-   <!-- Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        <h4 class="modal-title" id="myModalLabel">Edit item</h4>
-			      </div>
-				  <form  action="/{{ number }}/edit_item/" method="post">
-				  	  {% csrf_token %}
-			      <div class="modal-body">
-			       
-
-		  <div class="form-group">
-			<input type="hidden" class="form-control" name="item_id" >
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item Number</label>
-			<input type="text" class="form-control" name="item_number" placeholder="1.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Expense Incurred</label>
-			<input type="text" class="form-control" name="expense_incurred" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid</label>
-			<input type="text" class="form-control" name="contractor_paid" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid Date</label>
-			<input type="Date" class="form-control" name="contractor_paid_date">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Allocation</label>
-			<input type="text" class="form-control" name="item_allocation" value="0.00">
-		  </div>
-					
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="submit" class="btn btn-primary">Save</button>
-			      </div>
-				  </form>
-			    </div>
-			  </div>
-</div>
-
-
 
 
 
@@ -547,5 +298,6 @@
 			$(e.currentTarget).find('input[name="payment_date"]').val(date);
 		});
 	</script>
-  </body>
+    </form>
+    </body>
 </html>

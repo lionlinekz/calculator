@@ -43,6 +43,25 @@ def index(request, number=0):
 
 
 @login_required(login_url='/login/')
+def estimate(request, number=0):
+	context_dict = {}
+	tasks = Task.objects.filter(site=number)
+	task_items = TaskItem.objects.all()
+	context_dict['tasks'] = tasks
+	context_dict['task_items'] = task_items
+	context_dict['number'] = number
+	context_dict.update(summary_header(number))
+	if request.method =='POST':
+	    try:
+                for task in tasks:
+                    ce = request.POST[task.id]
+                    task.costs_estimated = ce
+                    task.save()
+	    except Exception as e:
+			print e
+	return render(request, 'calc/estimate.html', context_dict)
+
+@login_required(login_url='/login/')
 def start(request):
     return default(request, 0)
 
