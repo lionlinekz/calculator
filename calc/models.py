@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
+class Contract(models.Model):
+    price = 0
+
+    def __unicode__(self):
+        return self.price
+
 class Task(models.Model):
 	site = models.IntegerField(default=0)
 	stage = models.CharField(max_length=128)

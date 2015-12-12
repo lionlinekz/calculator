@@ -44,6 +44,9 @@ def index(request, number=0):
 
 @login_required(login_url='/login/')
 def estimate(request, number=0):
+        tasks = Task.objects.all()
+        for task in tasks:
+            update_task(task.id) 
 	context_dict = {}
 	tasks = Task.objects.filter(site=number)
 	task_items = TaskItem.objects.all()
@@ -51,14 +54,14 @@ def estimate(request, number=0):
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
 	context_dict.update(summary_header(number))
-	if request.method =='POST':
-	    try:
+        if request.method == 'POST':
+            try:
                 for task in tasks:
-                    ce = request.POST[task.id]
+                    ce = request.POST.get(str(task.id), 0.0);
                     task.costs_estimated = ce
                     task.save()
-	    except Exception as e:
-			print e
+            except Exception as e:
+                print e
 	return render(request, 'calc/estimate.html', context_dict)
 
 @login_required(login_url='/login/')
@@ -167,23 +170,26 @@ def update_task(task_id):
 	task=Task.objects.get(id = task_id)
 	task_items = TaskItem.objects.filter(task=task)
 	count = 0
+        cost = task.costs_estimated
 	for task_item in task_items:
 		count = count + float(task_item.expense_incurred)
 	task.expense_incurred=count
 	if task.costs_quoted == 0:
+            cost = task.costs_estimated
+        if task.expense_incurred == 0:
 		task.under_quote_by = 0
 	else:
-		task.under_quote_by = task.costs_quoted - task.expense_incurred
+		task.under_quote_by = cost - task.expense_incurred
 
-	if task.expense_incurred <= task.costs_quoted:
-		task.under_quote_by2 = task.costs_quoted - task.expense_incurred
+	if task.expense_incurred <= cost:
+		task.under_quote_by2 = cost - task.expense_incurred
 	else:
 		task.under_quote_by2 = 0
-	if task.task_complete:
-		task.expense_future_calculator = 0
+	if task.task_complete:	
+		task.expense_future_calculator = cost - task.expense_incurred
 		task.infront_cost = task.costs_estimated - task.expense_incurred
 	else:
-		task.expense_future_calculator = task.costs_quoted-task.expense_incurred
+		task.expense_future_calculator = 0
 		task.infront_cost = 0
 
 	if task.expense_future_calculator<0:

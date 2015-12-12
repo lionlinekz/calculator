@@ -16,6 +16,7 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
 
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="{% static 'dashboard.css' %}" rel="stylesheet">
             <style type="text/css">
@@ -86,32 +87,32 @@
       <div class="row">
 	  <br><br>
         <div class="col-xs-12  main">
-	        <div class="table-responsive">
-	            <table class="table  table-fixedheader ">
+	        <div class="table-container">
+	            <table id="myTable" class="table  table-fixedheader ">
 	              <thead>
 	                <tr>
 	                  {% if is_admin  %} <th></th> {% endif %}
 	                  <th>Stage</th>
 	                  <th>Item No.</th>
-	                  <th width="15%">Task Description</th>
+	                  <th width="12%">Task Description</th>
 	                  <th>Costs Estimated</th>
 	                  <th>Costs Quoted</th>
 					  <th>Highest Quote</th>
 	                  <th>Expense Incurred</th>
 	                  <th>Expense Incurred</th>
 	                  <th>Invoice No.</th>
-	                  <th width="9%">Trade Contractor</th>
+	                  <th>Trade Contractor</th>
 					  <th>Contractor Paid</th>
-	                  <th width="6%">Paid Date</th>
+	                  <th>Paid Date</th>
 					  <th>Task Complete</th>
 					  <th>Under Quote</th>
 					  <th>Under QuoteBy</th>
 	                  <th>Expense FutureCalc</th>
 	                  <th>Expense Future</th>
-					  <th width="5%">Infront of CostEstimate</th>
+					  <th>Infront of CostEst</th>
 					  <th>Client Charged</th>
 	                  <th>Payment Received</th>
-	                  <th width="6%">Payment Date</th>
+	                  <th>Payment Date</th>
 	                  <th>Allocation</th>
 	                </tr>
 	              </thead>
@@ -120,7 +121,7 @@
 	                    {% if is_admin  %}<td></td>{% endif %}
 	                  <td ><strong> Summary </strong></td>
 	                  <td ><strong></strong></td>
-	                  <td ><strong> </strong></td>
+	                  <td width="12%" ><strong> </strong></td>
 	                  <td ><strong>{{ costs_estimated }}</strong></td>
 	                  <td ><strong>{{ costs_quoted }}</strong></td>
 					  <td ><strong>{{ highest_quote}}</strong></td>
@@ -143,12 +144,41 @@
 					  <td ><strong>{{ allocations }}</strong></td>
 	                </tr>
 	              	{% for task in tasks %}
+                    {% if task.task_complete %}
+                    <tr class="success">
+	                    {% if is_admin  %}<td><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a></td>{% endif %}
+	                  <td><strong>{{ task.stage }}</strong></td>
+	                  <td><strong>{{ task.item_no }}</strong></td>
+	                  <td width="12%"><strong>{{ task.task_name }} </strong></td>
+	                  <td><strong>{{ task.costs_estimated }}</strong></td>
+	                  <td><strong>{{ task.costs_quoted }}</strong></td>
+					  <td><strong>{{ task.highest_quote}}</strong></td>
+	                  <td><strong>{{ task.expense_incurred }}</strong></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
+					  <td><strong>{{ task.under_quote_by }}</strong></td>
+                      <td><strong>{{ task.under_quote_by2 }}</strong></td>
+					  <td><strong>{{ task.expense_future_calculator }}</strong></td>
+                      <td><strong>{{ task.expense_future }}</strong></td>
+                      <td {% if task.infront_cost < 0 %}class="danger"{% endif %}><strong>{{ task.infront_cost }}</strong></td>
+					  <td><strong>{{ task.client_charged }}</strong></td>
+					  <td><strong>{{ task.payment_received }}</strong></td>
+
+					  <td><strong>{{ task.payment_date|date:"d-m-y" }}</strong></td></b>
+					  					  <td class="active"></td>
+
+	                </tr>
+                    {% else %}
 	                <tr>
 	                    {% if is_admin  %}<td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a></td>{% endif %}
 	                  <td class="info"><strong>{{ task.stage }}</strong></td>
 	                  <td class="info"><strong>{{ task.item_no }}</strong></td>
-	                  <td class="info"><strong>{{ task.task_name }} </strong></td>
-	                  <td class="warning"><strong>{{ task.costs_estimated }} <br> <a href="#">edit</a></strong></td>
+	                  <td width="12%" class="info"><strong>{{ task.task_name }} </strong></td>
+	                  <td class="warning"><strong>{{ task.costs_estimated }}</strong></td>
 	                  <td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
 					  <td class="warning"><strong>{{ task.highest_quote}}</strong></td>
 	                  <td class="info"><strong>{{ task.expense_incurred }}</strong></td>
@@ -158,7 +188,7 @@
 					  <td class="active"></td>
 					  <td class="active"></td>
 					  <td class="warning"><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
-					  <td class="{% if task.under_quote_by < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
+                      <td class="{% if task.under_quote_by > 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
 					  <td class="{% if task.under_quote_by2 < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by2 }}</strong></td>
 					  <td class="{% if task.expense_future_calculator < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future_calculator }}</strong></td>
 					  <td class="{% if task.expense_future < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future }}</strong></td>
@@ -166,10 +196,11 @@
 					  <td class="warning"><strong>{{ task.client_charged }}</strong></td>
 					  <td class="warning"><strong>{{ task.payment_received }}</strong></td>
 
-					  <td class="warning"><strong>{{ task.payment_date }}</strong></td></b>
+					  <td class="warning"><strong>{{ task.payment_date|date:"d-m-y" }}</strong></td></b>
 					  					  <td class="active"></td>
 
 	                </tr>
+                    {% endif %}
 	                {% if is_admin or is_input or is_view_all  %}
 	                	{% for task_item in task_items %}
 	                		{% if task_item.task ==  task %}
@@ -179,7 +210,7 @@
 			                  <td class="active"></td>
 
 			                  <td>{{ task_item.item_no }}</td>
-			                  <td>{{ task_item.item_name }}</td>
+			                  <td width="12%">{{ task_item.item_name }}</td>
 							  <td class="active"></td>
 							  <td class="active"></td>
 							  <td class="active"></td>
@@ -188,7 +219,7 @@
 							  <td class="warning">{{ task_item.invoice_no }}</td>
 							  <td class="warning">{{ task_item.trade_contractor }}</td>
 							  <td class="warning">{{ task_item.contractor_paid }}</td>
-							  <td class="warning">{{ task_item.contractor_paid_date }}</td>
+							  <td class="warning">{{ task_item.contractor_paid_date|date:"d-m-y" }}</td>
 							  
 			                  <td class="active"></td>
 							  <td class="active"></td>
@@ -480,6 +511,7 @@
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
     <script src="{% static 'js/vendor/holder.min.js' %}"></script>
 	    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
 	<script src="{% static 'js/hilitor.js' %}"></script>
@@ -495,6 +527,13 @@
 		myHilitor2.apply(this.value);
 	  }, false);
 	</script>
+    <script>
+    $(document).ready(function(){
+            $(function(){
+                $("#myTable").tablesorter();
+                });
+            });
+    </script>
 	<script type="text/javascript">
 			$("#editModal").on('show.bs.modal', function(e){
 			var itemId = $(e.relatedTarget).data('item-id');
