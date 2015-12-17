@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^(?P<number>[0-9]+)/estimate/', views.estimate, name='estimate'),
     url(r'^(?P<number>[0-9]+)', views.index, name='index'),
     url(r'^(?P<default>\w+)', views.default), 
+    url(r'^$', views.start),
 # ADD THIS NEW TUPLE!
 )
 
