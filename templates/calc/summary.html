@@ -88,7 +88,7 @@
     		<div class="col-lg-6">
 	    		<ul class="list-group">
 				  <li class="list-group-item">
-				    <span class="badge"></span>
+				    <span class="badge">{{ contract_price }}</span>
 				    Contract Price
 				  </li>
 				  <li class="list-group-item">
@@ -105,7 +105,7 @@
 				    Cost Difference Quoted
 				  </li>
 				  <li class="list-group-item">
-				    <span class="badge"></span>
+				    <span class="badge">{{ cost_difference_actual }}</span>
 				    Cost Difference Actual
 				  </li>
 				  <li class="list-group-item">
@@ -137,276 +137,34 @@ Balance To Be Invoiced				  </li>
 				    <span class="badge">{{ allocations }}</span>
 Allocations				  </li>
 				  <li class="list-group-item">
-				    <span class="badge"></span>
+				    <span class="badge">{{ profit_actual }}</span>
 Profit Actual				  </li>
 				
 								  <li class="list-group-item">
-				    <span class="badge"></span>
+				    <span class="badge">{{ profit_potential }}</span>
 Profit Estimate				  </li>
 				  <li class="list-group-item">
-				    <span class="badge"></span>
+				    <span class="badge">{{ profit_estimate }}</span>
 Profit Potential				  </li>
 				</ul>
 			</div>
 		</div>
+
+		<div class="col-lg-5  col-lg-offset-3">
+
+				<form  action="/default/" method="post" class="form-inline">
+				  	  {% csrf_token %}
+			      <div class="modal-body">
+					  <div class="form-group">
+						<label for="Stage">Contract Price</label>
+						<input type="text" class="form-control" name="contract_price" value="">
+					  </div>
+			        <button type="submit" class="btn btn-primary">Save</button>
+				  </form>
+				</div>
 	</div>
 </div>
 			<!-- Button trigger modal -->
-
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add task</h4>
-      </div>
-	  <form  action="/{{ number }}/add_task/" method="post">
-	  	  {% csrf_token %}
-      <div class="modal-body">
-       
-		  <div class="form-group">
-			<label for="Stage">Stage</label>
-			<input type="text" class="form-control" name="stage" value="General">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Task Number</label>
-			<input type="text" class="form-control" name="task_number" value="1.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Task name</label>
-			<input type="text" class="form-control" name="task_name">
-		  </div>
-		  		  		  <div class="form-group">
-			<label for="Stage">Cost Estimated</label>
-			<input type="text" class="form-control" name="cost_estimated" value="0.00">
-		  </div>
-
-		  		  <div class="form-group">
-			<label for="Stage">Cost Quoted</label>
-			<input type="text" class="form-control" name="cost_quoted" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Highest Quote</label>
-			<input type="text" class="form-control" name="highest_quote" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Client Charged</label>
-			<input type="text" class="form-control" name="client_charged" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Payment Received</label>
-			<input type="text" class="form-control" name="payment_received" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Payment Date</label>
-			<input type="Date" class="form-control" name="payment_date">
-		  </div>		 
-		
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Add</button>
-      </div>
-	  </form>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add item</h4>
-      </div>
-	  <form  action="/{{ number }}/add_item/" method="post">
-	  	  {% csrf_token %}
-      <div class="modal-body">
-       
-		  <div class="form-group">
-			<label for="Stage">Task</label>
-			<select  class="form-control"  name="task">
-				{% for task in tasks %}
-				  <option value="{{ task.id }}">{{ task.task_name }}</option>
-			 	{% endfor %}
-			</select>
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item Number</label>
-			<input type="text" class="form-control" name="item_number" placeholder="1.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Expense Incurred</label>
-			<input type="text" class="form-control" name="expense_incurred" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid</label>
-			<input type="text" class="form-control" name="contractor_paid" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid Date</label>
-			<input type="Date" class="form-control" name="contractor_paid_date">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Allocation</label>
-			<input type="text" class="form-control" name="allocation" value="0.00">
-		  </div>
-		 
-		
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Add</button>
-      </div>
-	  </form>
-    </div>
-  </div>
-</div>
-   <!-- Modal -->
-<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        <h4 class="modal-title" id="myModalLabel">Edit task</h4>
-			      </div>
-				  <form  action="/{{ number }}/edit_task/" method="post">
-				  	  {% csrf_token %}
-			      <div class="modal-body">
-			       
-			       	<div class="form-group">
-						<input type="hidden" class="form-control" name="task_id" value="">
-					  </div>
-					  <div class="form-group">
-						<label for="Stage">Stage</label>
-						<input type="text" class="form-control" name="stage" value="">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Task Number</label>
-						<input type="text" class="form-control" name="task_number" value="1.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Task name</label>
-						<input type="text" class="form-control" name="task_name">
-					  </div>
-					  		  		  <div class="form-group">
-						<label for="Stage">Cost Estimated</label>
-						<input type="text" class="form-control" name="cost_estimated" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Cost Quoted</label>
-						<input type="text" class="form-control" name="cost_quoted" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Highest Quote</label>
-						<input type="text" class="form-control" name="highest_quote" value="0.00">
-					  </div>
-
-					  <div class="form-group">
-						<label for="Stage">Task completed</label>
-						<select  class="form-control"  name="task_completed">
-							  <option value="1">OPEN</option>
-							  <option value="2">CLOSED</option>
-						</select>
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Client Charged</label>
-						<input type="text" class="form-control" name="client_charged" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Payment Received</label>
-						<input type="text" class="form-control" name="payment_received" value="0.00">
-					  </div>
-					  		  <div class="form-group">
-						<label for="Stage">Payment Date</label>
-						<input type="Date" class="form-control" name="payment_date">
-					  </div>		 
-					
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="submit" class="btn btn-primary">Save</button>
-			      </div>
-				  </form>
-			    </div>
-			  </div>
-</div>
-
-   <!-- Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        <h4 class="modal-title" id="myModalLabel">Edit item</h4>
-			      </div>
-				  <form  action="/{{ number }}/edit_item/" method="post">
-				  	  {% csrf_token %}
-			      <div class="modal-body">
-			       
-
-		  <div class="form-group">
-			<input type="hidden" class="form-control" name="item_id" >
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item Number</label>
-			<input type="text" class="form-control" name="item_number" placeholder="1.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Expense Incurred</label>
-			<input type="text" class="form-control" name="expense_incurred" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid</label>
-			<input type="text" class="form-control" name="contractor_paid" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid Date</label>
-			<input type="Date" class="form-control" name="contractor_paid_date">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Allocation</label>
-			<input type="text" class="form-control" name="item_allocation" value="0.00">
-		  </div>
-					
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="submit" class="btn btn-primary">Save</button>
-			      </div>
-				  </form>
-			    </div>
-			  </div>
-</div>
-
-
 
 
 

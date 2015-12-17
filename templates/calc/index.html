@@ -58,16 +58,16 @@
           </button>
 
 		  {% if is_admin or is_input %} 
-          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+ Add task</a>
-		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+ Add item</a>
+          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+Add task/Estimate</a>
+		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+Input Quote</a>
 		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> export to pdf</a>
-            {{ number }}
 		  {% endif %} 
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
           	<li><a href="#"></a> </li>
+          	<li><a href="/{{ number }}/estimate/">Enter Costs Estimated</a></li>
           	<li><a href="/Summary/">Summary</a></li>
             <li {% if number == '0' %} class="active" {% endif %}><a href="/0/">Unit 1</a></li> 
             <li {% if number == '1' %}  class="active" {% endif %}><a href="/1/">Unit 2</a></li>
@@ -99,7 +99,6 @@
 	                  <th>Costs Quoted</th>
 					  <th>Highest Quote</th>
 	                  <th>Expense Incurred</th>
-	                  <th>Expense Incurred</th>
 	                  <th>Invoice No.</th>
 	                  <th>Trade Contractor</th>
 					  <th>Contractor Paid</th>
@@ -110,7 +109,7 @@
 	                  <th>Expense FutureCalc</th>
 	                  <th>Expense Future</th>
 					  <th>Infront of CostEst</th>
-					  <th>Client Charged</th>
+					  <th>Charged</th>
 	                  <th>Payment Received</th>
 	                  <th>Payment Date</th>
 	                  <th>Allocation</th>
@@ -126,7 +125,6 @@
 	                  <td ><strong>{{ costs_quoted }}</strong></td>
 					  <td ><strong>{{ highest_quote}}</strong></td>
 	                  <td ><strong>{{ expense_incurred }}</strong></td>
-					  <td ></td>
 					  <td ></td>
 					  <td ></td>
 					  <td ></td>
@@ -158,17 +156,16 @@
 					  <td></td>
 					  <td></td>
 					  <td></td>
-					  <td></td>
 					  <td><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
 					  <td><strong>{{ task.under_quote_by }}</strong></td>
                       <td><strong>{{ task.under_quote_by2 }}</strong></td>
 					  <td><strong>{{ task.expense_future_calculator }}</strong></td>
                       <td><strong>{{ task.expense_future }}</strong></td>
                       <td {% if task.infront_cost < 0 %}class="danger"{% endif %}><strong>{{ task.infront_cost }}</strong></td>
-					  <td><strong>{{ task.client_charged }}</strong></td>
-					  <td><strong>{{ task.payment_received }}</strong></td>
+					  <td><strong>{% if task.task_complete %} {{ task.client_charged }} {% endif %}</strong></td>
+					  <td><strong>{% if task.task_complete %} {{ task.payment_received }} {% endif %}</strong></td>
 
-					  <td><strong>{{ task.payment_date|date:"d-m-y" }}</strong></td></b>
+					  <td><strong>{% if task.task_complete %} {{ task.payment_date|date:"d-m-y" }} {% endif %}</strong></td></b>
 					  					  <td class="active"></td>
 
 	                </tr>
@@ -186,21 +183,20 @@
 					  <td class="active"></td>
 					  <td class="active"></td>
 					  <td class="active"></td>
-					  <td class="active"></td>
 					  <td class="warning"><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
                       <td class="{% if task.under_quote_by > 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
 					  <td class="{% if task.under_quote_by2 < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by2 }}</strong></td>
 					  <td class="{% if task.expense_future_calculator < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future_calculator }}</strong></td>
 					  <td class="{% if task.expense_future < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future }}</strong></td>
 					  <td class="{% if task.infront_cost < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.infront_cost }}</strong></td>
-					  <td class="warning"><strong>{{ task.client_charged }}</strong></td>
-					  <td class="warning"><strong>{{ task.payment_received }}</strong></td>
+					  <td class="warning"><strong></strong></td>
+					  <td class="warning"><strong></strong></td>
 
-					  <td class="warning"><strong>{{ task.payment_date|date:"d-m-y" }}</strong></td></b>
+					  <td class="warning"><strong></strong></td></b>
 					  					  <td class="active"></td>
 
 	                </tr>
-                    {% endif %}
+                    
 	                {% if is_admin or is_input or is_view_all  %}
 	                	{% for task_item in task_items %}
 	                		{% if task_item.task ==  task %}
@@ -211,7 +207,6 @@
 
 			                  <td>{{ task_item.item_no }}</td>
 			                  <td width="12%">{{ task_item.item_name }}</td>
-							  <td class="active"></td>
 							  <td class="active"></td>
 							  <td class="active"></td>
 							  <td class="active"></td>
@@ -235,6 +230,9 @@
 			                {% endif %}
 	                	{% endfor %}
 	                	{% endif %}
+	                	{% endif %}
+	                	
+	           
 	                {% endfor %}
 
 	              </tbody>
@@ -252,7 +250,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add task</h4>
+        <h4 class="modal-title" id="myModalLabel">Add task/Estimate</h4>
       </div>
 	  <form  action="/{{ number }}/add_task/" method="post">
 	  	  {% csrf_token %}
@@ -275,26 +273,12 @@
 			<input type="text" class="form-control" name="cost_estimated" value="0.00">
 		  </div>
 
-		  		  <div class="form-group">
-			<label for="Stage">Cost Quoted</label>
-			<input type="text" class="form-control" name="cost_quoted" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Highest Quote</label>
-			<input type="text" class="form-control" name="highest_quote" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Client Charged</label>
-			<input type="text" class="form-control" name="client_charged" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Payment Received</label>
-			<input type="text" class="form-control" name="payment_received" value="0.00">
-		  </div>
-		  		  <div class="form-group">
-			<label for="Stage">Payment Date</label>
-			<input type="Date" class="form-control" name="payment_date">
-		  </div>		 
+
+			<input type="hidden" class="form-control" name="cost_quoted" value="0.00">
+			<input type="hidden" class="form-control" name="highest_quote" value="0.00">
+			<input type="hidden" class="form-control" name="client_charged" value="0.00">
+			<input type="hidden" class="form-control" name="payment_received" value="0.00">
+			<input type="hidden" class="form-control" name="payment_date" value="">
 		
       </div>
       <div class="modal-footer">
@@ -417,7 +401,7 @@
 						</select>
 					  </div>
 					  		  <div class="form-group">
-						<label for="Stage">Client Charged</label>
+						<label for="Stage">Expense Incurred</label>
 						<input type="text" class="form-control" name="client_charged" value="0.00">
 					  </div>
 					  		  <div class="form-group">
@@ -512,8 +496,6 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
-    <script src="{% static 'js/vendor/holder.min.js' %}"></script>
-	    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
 	<script src="{% static 'js/hilitor.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
@@ -583,6 +565,13 @@
 			$(e.currentTarget).find('input[name="cost_estimated"]').val(costEstimated);
 			$(e.currentTarget).find('input[name="client_charged"]').val(clientCharged);
 			$(e.currentTarget).find('input[name="payment_received"]').val(paymentReceived);
+			$(e.currentTarget).find('input[name="payment_date"]').val(date);
+		});
+		$("#myModal").on('show.bs.modal', function(e){
+			var paymentDate = new Date(); 
+			var day = ("0" + paymentDate.getDate()).slice(-2);
+			var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
+			var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
 			$(e.currentTarget).find('input[name="payment_date"]').val(date);
 		});
 	</script>

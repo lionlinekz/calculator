@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from calc import views
+from django.conf import settings # New Import
+from django.conf.urls.static import static # New Import
 
 
 
@@ -29,6 +31,10 @@ urlpatterns = patterns('',
     url(r'^(?P<number>[0-9]+)/estimate/', views.estimate, name='estimate'),
     url(r'^(?P<number>[0-9]+)', views.index, name='index'),
     url(r'^(?P<default>\w+)', views.default), 
-    url(r'^$', views.start),
 # ADD THIS NEW TUPLE!
 )
+
+if settings.DEBUG:
+    urlpatterns += patterns(
+        'django.views.static',
+    )

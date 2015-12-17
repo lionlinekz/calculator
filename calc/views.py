@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from calc.models import Task
 from calc.models import TaskItem
+from calc.models import Contract
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -39,6 +40,14 @@ def index(request, number=0):
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
 		context_dict.update(summary_header(number))
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 
@@ -66,13 +75,17 @@ def estimate(request, number=0):
 
 @login_required(login_url='/login/')
 def start(request):
-    return default(request, 0)
+	return default(request, 0)
 
 @login_required(login_url='/login/')
 def default(request, default):
+	if request.method =='POST':
+		price = request.POST['contract_price']
+		Contract.price = price
 	context_dict = {}
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
+		context_dict['contract_price'] = Contract.price
 		is_admin = request.user.groups.filter(name='Full Access').exists()
 		is_input = request.user.groups.filter(name='Input Only').exists()
 		is_view_all = request.user.groups.filter(name='View all').exists()
@@ -95,6 +108,17 @@ def default(request, default):
 		context_dict['client_charged'] = client_charged['client_charged__sum']
 		context_dict['payment_received'] = payment_received['payment_received__sum']
 		context_dict['allocations'] = allocations['allocation__sum']
+		cost = 0
+		tasks = Task.objects.all()
+		for task in tasks:
+			if task.costs_quoted == 0:
+				cost = cost + task.costs_estimated
+			else:
+				cost = cost + task.costs_quoted
+		context_dict['cost_difference_actual'] = cost - context_dict['expense_incurred']
+		context_dict['profit_actual'] = int(Contract.price) - expense_incurred['expense_incurred__sum']
+		context_dict['profit_potential'] = int(Contract.price) - costs_quoted['costs_quoted__sum']
+		context_dict['profit_estimate'] = int(Contract.price) - costs_estimated['costs_estimated__sum']
 	return render(request, 'calc/summary.html', context_dict)
 
 
@@ -129,6 +153,14 @@ def add_task(request, number=0):
 		context_dict['is_input'] = is_input
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 @login_required(login_url='/login/')
@@ -164,19 +196,28 @@ def add_item(request, number=0):
 		context_dict['is_input'] = is_input
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 def update_task(task_id):
 	task=Task.objects.get(id = task_id)
 	task_items = TaskItem.objects.filter(task=task)
 	count = 0
-        cost = task.costs_estimated
+	cost = task.costs_quoted
 	for task_item in task_items:
 		count = count + float(task_item.expense_incurred)
 	task.expense_incurred=count
 	if task.costs_quoted == 0:
             cost = task.costs_estimated
-        if task.expense_incurred == 0:
+
+	if task.expense_incurred == 0:
 		task.under_quote_by = 0
 	else:
 		task.under_quote_by = cost - task.expense_incurred
@@ -247,6 +288,14 @@ def edit_task(request, number=0):
 		context_dict['is_input'] = is_input
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 @login_required(login_url='/login/')
@@ -289,6 +338,14 @@ def edit_item(request, number=0):
 		context_dict['is_input'] = is_input
 		context_dict['is_view_all'] = is_view_all
 		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 def user_login(request):
