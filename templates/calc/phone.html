@@ -15,7 +15,6 @@
 <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEBAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQEBAQEBAQEBAAEAAQABAAAAAAAAAAAAAQABAAEAAQEBAQEBAQEBAQEAAQABAAAAAAAAAAAAAAAAAAEAAQEBAQEBAQEBAQEBAQEBAAABAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAQAUAAF/1AABABQAAf/0AAAABAAA=" rel="icon" type="image/x-icon" />
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
-    <link href="{% static 'css/bootstrap-select.min.css' %}" rel="stylesheet">
 
     <link href="{% static 'css/custom.css' %}" rel="stylesheet">
     <!-- Custom styles for this template -->
@@ -58,11 +57,9 @@
             <span class="icon-bar"></span>
           </button>
 
-		  {% if is_admin or is_input %} 
           <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+Add task/Estimate</a>
 		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+Input Quote</a>
 		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> export to pdf</a>
-		  {% endif %} 
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -92,160 +89,46 @@
 	            <table id="myTable" class="table  table-fixedheader ">
 	              <thead>
 	                <tr>
-	                  {% if is_admin  %} <th></th> {% endif %}
+	                   <th></th> 
 	                  <th>Stage</th>
-	                  <th>Item No.</th>
 	                  <th width="12%">Task Description</th>
 	                  <th>Costs Estimated</th>
-	                  <th>Costs Quoted</th>
-					  <th>Highest Quote</th>
 	                  <th>Expense Incurred</th>
-	                  <th>Invoice No.</th>
-	                  <th>Trade Contractor</th>
-					  <th>Contractor Paid</th>
-	                  <th>Paid Date</th>
-					  <th>Task Complete</th>
-					  <th>Under Quote</th>
-					  <th>Under QuoteBy</th>
-	                  <th>Expense FutureCalc</th>
-	                  <th>Expense Future</th>
 					  <th>Infront of CostEst</th>
-					  <th>Charged</th>
-	                  <th>Payment Received</th>
-	                  <th>Payment Date</th>
-	                  <th>Allocation</th>
 	                </tr>
 	              </thead>
 	              <tbody>
 	              	<tr class="success">
-	                    {% if is_admin  %}<td></td>{% endif %}
+	                   <td></td>
 	                  <td ><strong> Summary </strong></td>
-	                  <td ><strong></strong></td>
 	                  <td width="12%" ><strong> </strong></td>
 	                  <td ><strong>{{ costs_estimated }}</strong></td>
-	                  <td ><strong>{{ costs_quoted }}</strong></td>
-					  <td ><strong>{{ highest_quote}}</strong></td>
 	                  <td ><strong>{{ expense_incurred }}</strong></td>
-					  <td ></td>
-					  <td ></td>
-					  <td ></td>
-					  <td ></td>
-					  <td ><strong></td>
-					  <td ><strong>{{ under_quote_by }}</strong></td>
-					  <td ><strong>{{ under_quote_by2 }}</strong></td>
-					  <td ><strong>{{ expense_future_calculator }}</strong></td>
-					  <td ><strong>{{ expense_future }}</strong></td>
 					  <td ><strong>{{ infront_cost }}</strong></td>
-					  <td ><strong>{{ client_charged }}</strong></td>
-					  <td ><strong>{{ payment_received }}</strong></td>
-
-					  <td ><strong></strong></td></b>
-					  <td ><strong>{{ allocations }}</strong></td>
 	                </tr>
 	              	{% for task in tasks %}
                     {% if task.task_complete %}
                     <tr class="success">
-	                    {% if is_admin  %}<td><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a><br>
-	                    <form id="viewform{{ task.id }}" action="/{{ number }}/view_items/" method="post">	
-	                    	{% csrf_token %}		
-	                    	<input type="hidden" name="task_id" value="{{ task.id }}">
-	                    	 <a href="javascript:{}" onclick="document.getElementById('viewform{{ task.id }}').submit(); return false;">view</a>
-	                    </form></td>{% endif %}
+	                 <td><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"></a></td>
 	                  <td><strong>{{ task.stage }}</strong></td>
-	                  <td><strong>{{ task.item_no }}</strong></td>
 	                  <td width="12%"><strong>{{ task.task_name }} </strong></td>
 	                  <td><strong>{{ task.costs_estimated }}</strong></td>
-	                  <td><strong>{{ task.costs_quoted }}</strong></td>
-					  <td><strong>{{ task.highest_quote}}</strong></td>
 	                  <td><strong>{{ task.expense_incurred }}</strong></td>
-					  <td></td>
-					  <td></td>
-					  <td></td>
-					  <td></td>
-					  <td><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
-					  <td><strong>{{ task.under_quote_by }}</strong></td>
-                      <td><strong>{{ task.under_quote_by2 }}</strong></td>
-					  <td><strong>{{ task.expense_future_calculator }}</strong></td>
-                      <td><strong>{{ task.expense_future }}</strong></td>
                       <td {% if task.infront_cost < 0 %}class="danger"{% endif %}><strong>{{ task.infront_cost }}</strong></td>
-					  <td><strong>{% if task.task_complete %} {{ task.client_charged }} {% endif %}</strong></td>
-					  <td><strong>{% if task.task_complete %} {{ task.payment_received }} {% endif %}</strong></td>
-
-					  <td><strong>{% if task.task_complete %} {{ task.payment_date|date:"d-m-y" }} {% endif %}</strong></td></b>
-					  					  <td class="active"></td>
-
 	                </tr>
                     {% else %}
 	                <tr>
-	                    {% if is_admin  %}<td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a><br>
-	                    <form id="delform{{ task.id }}" action="/{{ number }}/delete_task/" method="post">	
-	                    	{% csrf_token %}		
-	                    	<input type="hidden" name="task_id" value="{{ task.id }}">
-	                    	 <a style="color:red;" href="javascript:{}" onclick="document.getElementById('delform{{ task.id }}').submit(); return false;">delete {{ test }}</a>
-	                    </form>
-	                	</td>
-	                	{% endif %}
+	                   <td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   ></a></td>
 	                  <td class="info"><strong>{{ task.stage }}</strong></td>
-	                  <td class="info"><strong>{{ task.item_no }}</strong></td>
 	                  <td width="12%" class="info"><strong>{{ task.task_name }} </strong></td>
 	                  <td class="warning"><strong>{{ task.costs_estimated }}</strong></td>
-	                  <td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
-					  <td class="warning"><strong>{{ task.highest_quote}}</strong></td>
 	                  <td class="info"><strong>{{ task.expense_incurred }}</strong></td>
-					  <td class="active"></td>
-					  <td class="active"></td>
-					  <td class="active"></td>
-					  <td class="active"></td>
-					  <td class="warning"><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
-                      <td class="{% if task.under_quote_by > 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
-					  <td class="{% if task.under_quote_by2 < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by2 }}</strong></td>
-					  <td class="{% if task.expense_future_calculator < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future_calculator }}</strong></td>
-					  <td class="{% if task.expense_future < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future }}</strong></td>
 					  <td class="{% if task.infront_cost < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.infront_cost }}</strong></td>
-					  <td class="warning"><strong></strong></td>
-					  <td class="warning"><strong></strong></td>
-
-					  <td class="warning"><strong></strong></td></b>
-					  					  <td class="active"></td>
-
 	                </tr>
                     
-	                {% if is_admin or is_input or is_view_all  %}
-	                	{% for task_item in task_items %}
-	                		{% if task_item.task ==  task %}
-			                <tr>
-			                  
-			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a></td>{% endif %}
-			                  <td class="active"></td>
-
-			                  <td>{{ task_item.item_no }}</td>
-			                  <td width="12%">{{ task_item.item_name }}</td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="warning">{{ task_item.expense_incurred }}</td>
-							  <td class="warning">{{ task_item.invoice_no }}</td>
-							  <td class="warning">{{ task_item.trade_contractor }}</td>
-							  <td class="warning">{{ task_item.contractor_paid }}</td>
-							  <td class="warning">{{ task_item.contractor_paid_date|date:"d-m-y" }}</td>
-							  
-			                  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="active"></td>
-							  <td class="warning">{{ task_item.allocation }}</td>
-			                </tr>
-			                {% endif %}
-	                	{% endfor %}
-	                	{% endif %}
 	                	{% endif %}
 	                	
-	           
+
 	                {% endfor %}
 
 	              </tbody>
@@ -317,18 +200,19 @@
        
 		  <div class="form-group">
 			<label for="Stage">Task</label>
-			<select  class="form-control selectpicker"  name="task"  data-live-search="true"  onchange="getval(this);">
+			<select  class="form-control"  name="task">
 				{% for task in tasks %}
 				  <option value="{{ task.id }}">{{ task.task_name }}</option>
 			 	{% endfor %}
 			</select>
 		  </div>
 		  		  <div class="form-group">
-			<input type="hidden" class="form-control" name="item_number" value="1.00">
+			<label for="Stage">Item Number</label>
+			<input type="text" class="form-control" name="item_number" placeholder="1.00">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name" >
+			<input type="text" class="form-control" name="item_name">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Expense Incurred</label>
@@ -397,8 +281,7 @@
 						<input type="text" class="form-control" name="cost_estimated" value="0.00">
 					  </div>
 					  		  <div class="form-group">
-						<label for="Stage">Cost Quoted</label>
-						<input type="text" class="form-control" name="cost_quoted" value="0.00">
+						<input type="hidden" class="form-control" name="cost_quoted" value="0.00">
 					  </div>
 					  		  <div class="form-group">
 						<label for="Stage">Highest Quote</label>
@@ -413,16 +296,13 @@
 						</select>
 					  </div>
 					  		  <div class="form-group">
-						<label for="Stage">Expense Incurred</label>
-						<input type="text" class="form-control" name="client_charged" value="0.00">
+						<input type="hidden" class="form-control" name="client_charged" value="0.00">
 					  </div>
 					  		  <div class="form-group">
-						<label for="Stage">Payment Received</label>
-						<input type="text" class="form-control" name="payment_received" value="0.00">
+						<input type="hidden" class="form-control" name="payment_received" value="0.00">
 					  </div>
 					  		  <div class="form-group">
-						<label for="Stage">Payment Date</label>
-						<input type="Date" class="form-control" name="payment_date">
+						<input type="hidden" class="form-control" name="payment_date">
 					  </div>		 
 					
 			      </div>
@@ -452,37 +332,31 @@
 			<input type="hidden" class="form-control" name="item_id" >
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Item Number</label>
-			<input type="text" class="form-control" name="item_number" placeholder="1.00">
+			<input type="hidden" class="form-control" name="item_number" placeholder="1.00">
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name">
+			<input type="hidden" class="form-control" name="item_name">
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Expense Incurred</label>
-			<input type="text" class="form-control" name="expense_incurred" value="0.00">
+			<input type="hidden" class="form-control" name="expense_incurred" value="0.00">
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
+			<input type="hidden" class="form-control" name="invoice_number" value="0.00">
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
+			<input type="hidden" class="form-control" name="trade_contractor" value="0.00">
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid</label>
-			<input type="text" class="form-control" name="contractor_paid" value="0.00">
+			<input type="hidden" class="form-control" name="contractor_paid" value="0.00">
 		  </div>
 		  		  <div class="form-group">
-			<label for="Stage">Contractor Paid Date</label>
-			<input type="Date" class="form-control" name="contractor_paid_date">
+			<input type="hidden" class="form-control" name="contractor_paid_date">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Allocation</label>
 			<input type="text" class="form-control" name="item_allocation" value="0.00">
 		  </div>
+
 					
 			      </div>
 			      <div class="modal-footer">
@@ -506,11 +380,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
-
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
-	<script src="{% static 'js/hilitor.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
 	<script type="text/javascript">
@@ -530,12 +401,6 @@
                 });
             });
     </script>
-
-	<script type="text/javascript">
-	    function getval(sel) {
-	       $(e.currentTarget).find('input[name="item_name"]').val(sel.value);
-	    }
-	</script>
 	<script type="text/javascript">
 			$("#editModal").on('show.bs.modal', function(e){
 			var itemId = $(e.relatedTarget).data('item-id');
@@ -593,13 +458,6 @@
 			var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
 			var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
 			$(e.currentTarget).find('input[name="payment_date"]').val(date);
-		});
-		$("#itemModal").on('show.bs.modal', function(e){
-			var paymentDate = new Date(); 
-			var day = ("0" + paymentDate.getDate()).slice(-2);
-			var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
-			var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
-			$(e.currentTarget).find('input[name="contractor_paid_date"]').val(date);
 		});
 	</script>
   </body>
