@@ -317,18 +317,18 @@
        
 		  <div class="form-group">
 			<label for="Stage">Task</label>
-			<select  class="form-control selectpicker"  name="task"  data-live-search="true"  onchange="getval(this);">
+			<select  id="theSelect" class="form-control selectpicker"  name="task"  data-live-search="true"  onchange="getval(this);">
 				{% for task in tasks %}
 				  <option value="{{ task.id }}">{{ task.task_name }}</option>
 			 	{% endfor %}
 			</select>
 		  </div>
 		  		  <div class="form-group">
-			<input type="hidden" class="form-control" name="item_number" value="1.00">
+			<input  type="hidden" class="form-control" name="item_number" value="1.00">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Item name</label>
-			<input type="text" class="form-control" name="item_name" >
+			<input id="item_name" type="text" class="form-control" name="item_name" >
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Expense Incurred</label>
@@ -336,11 +336,11 @@
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
+			<input type="text" class="form-control" name="invoice_number" value="0001">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
+			<input type="text" class="form-control" name="trade_contractor" value=" ">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Contractor Paid</label>
@@ -465,11 +465,11 @@
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Invoice Number</label>
-			<input type="text" class="form-control" name="invoice_number" value="0.00">
+			<input type="text" class="form-control" name="invoice_number" value="0001">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Trade Contractor</label>
-			<input type="text" class="form-control" name="trade_contractor" value="0.00">
+			<input type="text" class="form-control" name="trade_contractor" value=" ">
 		  </div>
 		  		  <div class="form-group">
 			<label for="Stage">Contractor Paid</label>
@@ -532,9 +532,14 @@
     </script>
 
 	<script type="text/javascript">
-	    function getval(sel) {
-	       $(e.currentTarget).find('input[name="item_name"]').val(sel.value);
-	    }
+        $("#theSelect").change(function() {
+       
+        
+      
+                    $("#item_name").val($("#theSelect option:selected").text());
+         
+     
+        }).change();        
 	</script>
 	<script type="text/javascript">
 			$("#editModal").on('show.bs.modal', function(e){
