@@ -319,6 +319,39 @@ def delete_task(request, number=0):
 			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
+def delete_item(request, number=0):
+	context_dict = {}
+	if request.method =='POST':
+		task_item_id = request.POST['task_item_id']
+		taskItem = TaskItem.objects.get(id = task_item_id)
+		taskItem.delete()
+	context_dict['tasks']=Task.objects.filter(site=number)
+	context_dict['task_items'] = TaskItem.objects.all()
+	context_dict['number'] = number
+	if request.user.is_authenticated():
+		context_dict['user'] = request.user
+		is_admin = request.user.groups.filter(name='Full Access').exists()
+		is_input = request.user.groups.filter(name='Input Only').exists()
+		is_view_all = request.user.groups.filter(name='View all').exists()
+		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
+		context_dict['is_admin'] = is_admin
+		context_dict['is_input'] = is_input
+		context_dict['is_view_all'] = is_view_all
+		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
+		if request.user.groups.filter(name='Phone').exists():
+			return render(request, 'calc/phone.html', context_dict)
+		if request.user.groups.filter(name='Ipad').exists():
+			return render(request, 'calc/ipad.html', context_dict)
+	return render(request, 'calc/index.html', context_dict)
+
 @login_required(login_url='/login/')
 def edit_task(request, number=0):
 	context_dict = {}

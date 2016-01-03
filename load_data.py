@@ -1,7 +1,7 @@
 # Full path and name to your csv file
-csv_filepathname="/Users/assetsarsengaliyev/calculator/data-aset.csv"
+csv_filepathname="/Users/assetsarsengaliyev/Documents/calculator/data-aset.csv"
 # Full path to your django project directory
-your_djangoproject_home="/Users/assetsarsengaliyev/calculator"
+your_djangoproject_home="/Users/assetsarsengaliyev/Documents/calculator"
 
 
 import django
@@ -17,7 +17,7 @@ dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
 
 for row in dataReader:
 	task = Task()
-	task.site = 2
+	task.site = 3
 	task.stage = row[0]
 	task.item_no = row[1]
 	task.task_name = row[2]

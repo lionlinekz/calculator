@@ -73,6 +73,8 @@
             <li {% if number == '0' %} class="active" {% endif %}><a href="/0/">Unit 1</a></li> 
             <li {% if number == '1' %}  class="active" {% endif %}><a href="/1/">Unit 2</a></li>
             <li {% if number == '2' %} class="active" {% endif %}><a href="/2/">Unit 3</a></li>
+            <li {% if number == '3' %} class="active" {% endif %}><a href="/3/">Unit 4</a></li>
+
 			<li><a href="/logout/">Log out</a></li>
           </ul>
 		  <div id="search">
@@ -215,7 +217,12 @@
 	                		{% if task_item.task ==  task %}
 			                <tr>
 			                  
-			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a></td>{% endif %}
+			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit<br>
+			                    <form id="delitem{{ task_item.id }}" action="/{{ number }}/delete_item/" method="post">	
+			                    	{% csrf_token %}		
+			                    	<input type="hidden" name="task_item_id" value="{{ task_item.id }}">
+			                    	 <a style="color:red;" href="javascript:{}" onclick="document.getElementById('delitem{{ task_item.id }}').submit(); return false;">delete</a>
+			                    </form></a></td>{% endif %}
 			                  <td class="active"></td>
 
 			                  <td>{{ task_item.item_no }}</td>
@@ -533,12 +540,7 @@
 
 	<script type="text/javascript">
         $("#theSelect").change(function() {
-       
-        
-      
                     $("#item_name").val($("#theSelect option:selected").text());
-         
-     
         }).change();        
 	</script>
 	<script type="text/javascript">
