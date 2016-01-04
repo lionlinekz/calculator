@@ -56,15 +56,11 @@
             <span class="icon-bar"></span>
           </button>
 
-          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+Add task/Estimate</a>
-		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+Input Quote</a>
-		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> export to pdf</a>
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
           	<li><a href="#"></a> </li>
-          	<li><a href="/{{ number }}/estimate/">Enter Costs Estimated</a></li>
           	<li><a href="/Summary/">Summary</a></li>
             <li {% if number == '0' %} class="active" {% endif %}><a href="/0/">Unit 1</a></li> 
             <li {% if number == '1' %}  class="active" {% endif %}><a href="/1/">Unit 2</a></li>
