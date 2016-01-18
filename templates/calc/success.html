@@ -183,16 +183,16 @@
 			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a></td>{% endif %}
 			                  <td class="active"></td>
 
-			                  <td>{{ task_item.item_no }}</td>
-			                  <td width="12%">{{ task_item.item_name }}</td>
+			                  <td></td>
+			                  <td width="12%" class="{% if task_item.extra %}danger{% endif %}">{{ task_item.item_name }}</td>
 							  <td class="active"></td>
 							  <td class="active"></td>
 							  <td class="active"></td>
-							  <td class="warning">{{ task_item.expense_incurred }}</td>
-							  <td class="warning">{{ task_item.invoice_no }}</td>
-							  <td class="warning">{{ task_item.trade_contractor }}</td>
-							  <td class="warning">{{ task_item.contractor_paid }}</td>
-							  <td class="warning">{{ task_item.contractor_paid_date|date:"d-m-y" }}</td>
+							  <td class="{% if task_item.extra %}danger{% else %}warning{% endif %}">{{ task_item.expense_incurred }}</td>
+							  <td class="{% if task_item.extra %}danger{% else %}warning{% endif %}">{{ task_item.invoice_no }}</td>
+							  <td class="{% if task_item.extra %}danger{% else %}warning{% endif %}">{{ task_item.trade_contractor }}</td>
+							  <td class="{% if task_item.extra %}danger{% else %}warning{% endif %}">{{ task_item.contractor_paid }}</td>
+							  <td class="{% if task_item.extra %}danger{% else %}warning{% endif %}">{{ task_item.contractor_paid_date|date:"d-m-y" }}</td>
 							  
 			                  <td class="active"></td>
 							  <td class="active"></td>

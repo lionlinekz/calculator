@@ -26,6 +26,7 @@ class Task(models.Model):
 	client_charged = models.FloatField(default=0)
 	payment_received = models.FloatField(default=0)
 	payment_date = models.DateField(default=datetime.now)
+	allocation = models.FloatField(default=0)
 
 	class Meta:
 		unique_together = ('item_no', 'stage', 'site', 'task_name')
@@ -43,6 +44,7 @@ class TaskItem(models.Model):
 	contractor_paid = models.FloatField()
 	contractor_paid_date = models.DateField()
 	allocation = models.FloatField()
+	extra = models.BooleanField(default=False)
 
 	class Meta:
 		unique_together = ('item_no', 'invoice_no', 'contractor_paid_date')

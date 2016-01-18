@@ -50,8 +50,28 @@ def view_all(request, number=0):
 	context_dict['tasks'] = Task.objects.filter(task_complete = True, site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
-	return_html(request, context_dict)
-	print('hello')
+	if request.user.is_authenticated():
+		context_dict['user'] = request.user
+		is_admin = request.user.groups.filter(name='Full Access').exists()
+		is_input = request.user.groups.filter(name='Input Only').exists()
+		is_view_all = request.user.groups.filter(name='View all').exists()
+		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
+		context_dict['is_admin'] = is_admin
+		context_dict['is_input'] = is_input
+		context_dict['is_view_all'] = is_view_all
+		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
+		if request.user.groups.filter(name='Phone').exists():
+			return render(request, 'calc/phone.html', context_dict)
+		if request.user.groups.filter(name='Ipad').exists():
+			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/success.html', context_dict)
 
 @login_required(login_url='/login/')
@@ -62,7 +82,28 @@ def view_items(request, number=0):
 		context_dict['tasks'] = Task.objects.filter(id = task_id)
 		context_dict['task_items'] = TaskItem.objects.all()
 		context_dict['number'] = number
-	return_html(request, context_dict)
+	if request.user.is_authenticated():
+		context_dict['user'] = request.user
+		is_admin = request.user.groups.filter(name='Full Access').exists()
+		is_input = request.user.groups.filter(name='Input Only').exists()
+		is_view_all = request.user.groups.filter(name='View all').exists()
+		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
+		context_dict['is_admin'] = is_admin
+		context_dict['is_input'] = is_input
+		context_dict['is_view_all'] = is_view_all
+		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
+		if request.user.groups.filter(name='Phone').exists():
+			return render(request, 'calc/phone.html', context_dict)
+		if request.user.groups.filter(name='Ipad').exists():
+			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/success.html', context_dict)
 
 
@@ -76,7 +117,28 @@ def index(request, number=0):
 	context_dict['tasks'] = tasks
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
-	return_html(request, context_dict)
+	if request.user.is_authenticated():
+		context_dict['user'] = request.user
+		is_admin = request.user.groups.filter(name='Full Access').exists()
+		is_input = request.user.groups.filter(name='Input Only').exists()
+		is_view_all = request.user.groups.filter(name='View all').exists()
+		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
+		context_dict['is_admin'] = is_admin
+		context_dict['is_input'] = is_input
+		context_dict['is_view_all'] = is_view_all
+		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
+		if request.user.groups.filter(name='Phone').exists():
+			return render(request, 'calc/phone.html', context_dict)
+		if request.user.groups.filter(name='Ipad').exists():
+			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 
@@ -166,7 +228,28 @@ def add_task(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
-	return_html(request, context_dict)
+	if request.user.is_authenticated():
+		context_dict['user'] = request.user
+		is_admin = request.user.groups.filter(name='Full Access').exists()
+		is_input = request.user.groups.filter(name='Input Only').exists()
+		is_view_all = request.user.groups.filter(name='View all').exists()
+		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
+		context_dict['is_admin'] = is_admin
+		context_dict['is_input'] = is_input
+		context_dict['is_view_all'] = is_view_all
+		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
+		if request.user.groups.filter(name='Phone').exists():
+			return render(request, 'calc/phone.html', context_dict)
+		if request.user.groups.filter(name='Ipad').exists():
+			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 @login_required(login_url='/login/')
@@ -185,6 +268,9 @@ def add_item(request, number=0):
 			contractor_paid_date = request.POST['contractor_paid_date']
 			allocation = request.POST['allocation']
 			item = TaskItem(task=task, item_no=item_number, item_name=item_name, expense_incurred=expense_incurred, invoice_no=invoice_number, trade_contractor=trade_contractor, contractor_paid=contractor_paid, contractor_paid_date=contractor_paid_date, allocation=allocation)
+			if task.task_complete:
+				item.extra = True
+				item.item_name = item_name + " EXTRA"
 			item.save()	
 		except Exception as e:
 			print e
@@ -192,7 +278,28 @@ def add_item(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
-	return_html(request, context_dict)
+	if request.user.is_authenticated():
+		context_dict['user'] = request.user
+		is_admin = request.user.groups.filter(name='Full Access').exists()
+		is_input = request.user.groups.filter(name='Input Only').exists()
+		is_view_all = request.user.groups.filter(name='View all').exists()
+		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
+		context_dict['is_admin'] = is_admin
+		context_dict['is_input'] = is_input
+		context_dict['is_view_all'] = is_view_all
+		context_dict['is_view_dashboard'] = is_view_dashboard
+		if request.user.groups.filter(name='Michael').exists():
+			return render(request, 'calc/michael.html', context_dict)
+		if request.user.groups.filter(name='Tayla').exists():
+			return render(request, 'calc/tayla.html', context_dict)
+		if request.user.groups.filter(name='Maria').exists():
+			return render(request, 'calc/maria.html', context_dict)
+		if request.user.groups.filter(name='Tracy').exists():
+			return render(request, 'calc/tracy.html', context_dict)
+		if request.user.groups.filter(name='Phone').exists():
+			return render(request, 'calc/phone.html', context_dict)
+		if request.user.groups.filter(name='Ipad').exists():
+			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 def update_task(task_id):
@@ -241,7 +348,32 @@ def delete_task(request, number=0):
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
 	return_html(request, context_dict)
-	return render(request, 'calc/index.html', context_dict)
+	return index(request, number)
+
+@login_required(login_url='/login/')
+def allocation(request, number=0):
+	context_dict = {}
+	if request.method =='POST':
+		task_id = request.POST['task_id']
+		task_alloc = request.POST['task_alloc']
+		task = Task.objects.get(id = task_id)
+		task.allocation = task_alloc
+		task.save()
+	context_dict['tasks']=Task.objects.filter(site=number)
+	context_dict['task_items'] = TaskItem.objects.all()
+	context_dict['number'] = number
+	return_html(request, context_dict)
+	return index(request, number)
+
+@login_required(login_url='/login/')
+def check(request):
+	if request.user.groups.filter(name='Michael').exists():
+		if request.method =='POST':
+			password = request.POST['password']
+			if password == "TASMANIA":
+				return render(request, 'calc/secret.html')
+		return render(request, 'calc/check.html')
+	return index(request, number = 0)
 
 def delete_item(request, number=0):
 	context_dict = {}
