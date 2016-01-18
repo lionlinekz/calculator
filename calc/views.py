@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from calc.models import Task
 from calc.models import TaskItem
-from calc.models import Contract
+from calc.models import Contract, WishList
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -351,6 +351,16 @@ def delete_task(request, number=0):
 	return index(request, number)
 
 @login_required(login_url='/login/')
+def delete_wishlist(request):
+	context_dict = {}
+	if request.method =='POST':
+		item_id = request.POST['item_id']
+		item = WishList.objects.get(id = item_id)
+		item.delete()
+	context_dict['wishlist'] = WishList.objects.all()
+	return render(request, 'calc/secret.html', context_dict)
+
+@login_required(login_url='/login/')
 def allocation(request, number=0):
 	context_dict = {}
 	if request.method =='POST':
@@ -374,6 +384,18 @@ def check(request):
 				return render(request, 'calc/secret.html')
 		return render(request, 'calc/check.html')
 	return index(request, number = 0)
+
+@login_required(login_url='/login/')
+def add_wishlist(request):
+	context_dict = {}
+	if request.method == 'POST':
+		wl = WishList()
+		wl.name = request.POST['name']
+		wl.price = request.POST['price']
+		wl.save()
+	context_dict['wishlist'] = WishList.objects.all()
+	return render(request, 'calc/secret.html', context_dict)
+
 
 def delete_item(request, number=0):
 	context_dict = {}

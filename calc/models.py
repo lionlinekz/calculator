@@ -52,3 +52,10 @@ class TaskItem(models.Model):
 
 	def __unicode__(self):
 		return self.item_name
+
+class WishList(models.Model):
+	name = models.CharField(max_length=256)
+	price = models.FloatField()
+
+	def __unicode__(self):
+		return self.name
