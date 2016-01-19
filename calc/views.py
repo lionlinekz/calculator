@@ -46,7 +46,7 @@ def return_html(request, context_dict):
 
 @login_required(login_url='/login/')
 def view_all(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	context_dict['tasks'] = Task.objects.filter(task_complete = True, site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
@@ -76,7 +76,7 @@ def view_all(request, number=0):
 
 @login_required(login_url='/login/')
 def view_items(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
 		context_dict['tasks'] = Task.objects.filter(id = task_id)
@@ -111,7 +111,7 @@ def view_items(request, number=0):
 
 @login_required(login_url='/login/')
 def index(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	tasks = Task.objects.filter(site=number)
 	task_items = TaskItem.objects.all()
 	context_dict['tasks'] = tasks
@@ -147,7 +147,7 @@ def estimate(request, number=0):
         tasks = Task.objects.all()
         for task in tasks:
             update_task(task.id) 
-	context_dict = {}
+	context_dict = summary_header(number)
 	tasks = Task.objects.filter(site=number)
 	task_items = TaskItem.objects.all()
 	context_dict['tasks'] = tasks
@@ -173,7 +173,7 @@ def default(request, default):
 	if request.method =='POST':
 		price = request.POST['contract_price']
 		Contract.price = price
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		context_dict['contract_price'] = Contract.price
@@ -209,7 +209,7 @@ def default(request, default):
 
 @login_required(login_url='/login/')
 def add_task(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
 			stage = request.POST['stage']
@@ -254,7 +254,7 @@ def add_task(request, number=0):
 
 @login_required(login_url='/login/')
 def add_item(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
 			task_id = int(request.POST['task'])
@@ -339,7 +339,7 @@ def update_task(task_id):
 
 @login_required(login_url='/login/')
 def delete_task(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
 		task = Task.objects.get(id = task_id)
@@ -352,7 +352,7 @@ def delete_task(request, number=0):
 
 @login_required(login_url='/login/')
 def delete_wishlist(request):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		item_id = request.POST['item_id']
 		item = WishList.objects.get(id = item_id)
@@ -362,7 +362,7 @@ def delete_wishlist(request):
 
 @login_required(login_url='/login/')
 def allocation(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
 		task_alloc = request.POST['task_alloc']
@@ -398,7 +398,7 @@ def add_wishlist(request):
 
 
 def delete_item(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_item_id = request.POST['task_item_id']
 		taskItem = TaskItem.objects.get(id = task_item_id)
@@ -411,7 +411,7 @@ def delete_item(request, number=0):
 
 @login_required(login_url='/login/')
 def edit_task(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
 			task_id = request.POST['task_id']
@@ -451,7 +451,7 @@ def edit_task(request, number=0):
 
 @login_required(login_url='/login/')
 def edit_item(request, number=0):
-	context_dict = {}
+	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
 			item_id = int(request.POST['item_id'])
