@@ -347,7 +347,7 @@ def delete_task(request, number=0):
 
 @login_required(login_url='/login/')
 def delete_wishlist(request):
-	context_dict = summary_header(number)
+	context_dict = {}
 	if request.method =='POST':
 		item_id = request.POST['item_id']
 		item = WishList.objects.get(id = item_id)
@@ -372,32 +372,35 @@ def allocation(request, number=0):
 
 @login_required(login_url='/login/')
 def check(request):
-	if request.user.groups.filter(name='Michael').exists():
-		if request.method =='POST':
-			password = request.POST['password']
-			if password == "TASMANIA":
-				return render(request, 'calc/secret.html')
-		return render(request, 'calc/check.html')
-	return index(request, number = 0)
+	context_dict = {}
+	context_dict['wishlist'] = WishList.objects.all()
+	return render(request, 'calc/secret.html', context_dict)
+
 
 @login_required(login_url='/login/')
 def add_wishlist(request):
 	context_dict = {}
 	if request.method == 'POST':
-		wl = WishList()
-		wl.name = request.POST['name']
-		wl.price = request.POST['price']
-		wl.save()
+		try:
+			wl = WishList()
+			wl.name = request.POST['name']
+			wl.price = request.POST['price']
+			wl.save()
+		except Exception as e:
+			print e
 	context_dict['wishlist'] = WishList.objects.all()
 	return render(request, 'calc/secret.html', context_dict)
 
 
 def delete_item(request, number=0):
-	context_dict = summary_header(number)
+	context_dict = {}
 	if request.method =='POST':
-		task_item_id = request.POST['task_item_id']
-		taskItem = TaskItem.objects.get(id = task_item_id)
-		taskItem.delete()
+		try:
+			task_item_id = request.POST['task_item_id']
+			taskItem = TaskItem.objects.get(id = task_item_id)
+			taskItem.delete()
+		except Exception as e:
+			print e
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number

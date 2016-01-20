@@ -49,13 +49,15 @@ class TaskItem(models.Model):
 	class Meta:
 		unique_together = ('item_no', 'invoice_no', 'contractor_paid_date')
 
-
 	def __unicode__(self):
 		return self.item_name
 
 class WishList(models.Model):
 	name = models.CharField(max_length=256)
 	price = models.FloatField()
+	
+	class Meta:
+		unique_together = ('name', 'price')	
 
 	def __unicode__(self):
 		return self.name

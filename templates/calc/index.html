@@ -46,10 +46,12 @@
           </button>
 
 		  {% if is_admin or is_input %} 
-          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">+Add New Task/Estimate</a>
-          <a class="navbar-brand" href="#inputQuoteModal"  data-toggle="modal" data-target="#inputQuoteModal">+Input Quote</a>
-		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">+Add item</a>
-		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> export to pdf</a>
+          <a class="navbar-brand" href="#myModal"  data-toggle="modal" data-target="#myModal">Add New Task/Estimate</a>
+          <a class="navbar-brand" href="#inputQuoteModal"  data-toggle="modal" data-target="#inputQuoteModal">Enter invoice</a>
+		  <a class="navbar-brand" href="#itemModal"  data-toggle="modal" data-target="#itemModal">New payment</a>
+		  <a class="navbar-brand" href="#payModal"  data-toggle="modal" data-target="#payModal">Pay invoice</a>
+		  <a class="navbar-brand" href="/{{ number }}/pdfView/"> pdf</a>
+		  <a class="navbar-brand" id="invis" href="/check/">wishlist</a>
 		  {% endif %} 
 
         </div>
@@ -205,7 +207,7 @@
 			                  
 			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a><br>
 
-			                    	<a style="color:red;" href="#delItemModal" data-toggle="modal" data-target="#delItemModal" data-task-id="{{ task_item.id }}" data-task-desc="{{ task_item.item_name }}">delete</a>
+			                    <a style="color:red;" href="#delItemModal" data-toggle="modal" data-target="#delItemModal" data-task-id="{{ task_item.id }}" data-task-desc="{{ task_item.item_name }}">delete</a>
 			                    	 </td>{% endif %}
 			                  <td class="active"></td>
 
@@ -429,6 +431,79 @@
   </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="payModal" tabindex="-1" role="dialog" aria-labelledby="payModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Pay invoice</h4>
+      </div>
+	  <form  action="/{{ number }}/add_item/" method="post">
+	  	  {% csrf_token %}
+      <div class="modal-body">
+       
+		  <div class="form-group">
+			<label for="Stage">Task</label>
+			<select  id="paySelect" class="form-control selectpicker"  name="task"  data-live-search="true"  onchange="getval(this);">
+				{% for task in tasks %}
+				  <option value="{{ task.id }}">{{ task.task_name }}</option>
+			 	{% endfor %}
+			</select>
+		  </div>
+		  <div class="form-group">
+			<label for="Stage">Task</label>
+			<select  id="invoice" class="form-control selectpicker"  name="task"  data-live-search="true"  onchange="getval(this);">
+				{% for task in tasks %}
+				  <option value="{{ task.id }}">{{ task.task_name }}</option>
+			 	{% endfor %}
+			</select>
+		  </div>
+		  		  <div class="form-group">
+			<input  type="hidden" class="form-control" name="item_number" value="1.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Item name</label>
+			<input id="item_name" type="text" class="form-control" name="item_name" >
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Expense Incurred</label>
+			<input type="text" class="form-control" name="expense_incurred" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Invoice Number</label>
+			<input type="text" class="form-control" name="invoice_number" value="0001">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Trade Contractor</label>
+			<input type="text" class="form-control" name="trade_contractor" value=" ">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Contractor Paid</label>
+			<input type="text" class="form-control" name="contractor_paid" value="0.00">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Contractor Paid Date</label>
+			<input type="Date" class="form-control" name="contractor_paid_date">
+		  </div>
+		  		  <div class="form-group">
+			<label for="Stage">Allocation</label>
+			<input type="text" class="form-control" name="allocation" value="0.00">
+		  </div>
+		 
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+	  </form>
+    </div>
+  </div>
+</div>
+
+
 <!-- Modal -->
 <div class="modal fade" id="inputQuoteModal" tabindex="-1" role="dialog" aria-labelledby="iqModalLabel">
   <div class="modal-dialog" role="document">
@@ -636,6 +711,10 @@
 		myHilitor2.setMatchType("left");
 	  }, false);
 	  document.getElementById("keywords").addEventListener("keyup", function() {
+	  	var search = $("#keywords").val();
+	  	if (search == "TASMANIA") {
+		    $("#invis").show();
+		}
 		myHilitor2.apply(this.value);
 	  }, false);
 	</script>
@@ -659,6 +738,7 @@
 	</script>
 
 	<script type="text/javascript">
+			$("#invis").hide();
 			$("#editModal").on('show.bs.modal', function(e){
 			var itemId = $(e.relatedTarget).data('item-id');
 			var itemNo = $(e.relatedTarget).data('item-no');
