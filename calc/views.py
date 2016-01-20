@@ -312,12 +312,7 @@ def update_task(task_id):
 	task.expense_incurred=count
 	if task.costs_quoted == 0:
             cost = task.costs_estimated
-
-	if task.expense_incurred == 0:
-		task.under_quote_by = 0
-	else:
-		task.under_quote_by = cost - task.expense_incurred
-
+	task.under_quote_by = task.costs_estimated - task.costs_quoted
 	if task.expense_incurred <= cost:
 		task.under_quote_by2 = cost - task.expense_incurred
 	else:
