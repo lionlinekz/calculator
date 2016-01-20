@@ -203,12 +203,10 @@
 	                		{% if task_item.task ==  task %}
 			                <tr>
 			                  
-			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit<br>
-			                    <form id="delitem{{ task_item.id }}" action="/{{ number }}/delete_item/" method="post">	
-			                    	{% csrf_token %}		
-			                    	<input type="hidden" name="task_item_id" value="{{ task_item.id }}">
-			                    	 <a style="color:red;" href="javascript:{}" onclick="document.getElementById('delitem{{ task_item.id }}').submit(); return false;">delete</a>
-			                    </form></a></td>{% endif %}
+			                  {% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a><br>
+
+			                    	<a style="color:red;" href="#delItemModal" data-toggle="modal" data-target="#delItemModal" data-task-id="{{ task_item.id }}" data-task-desc="{{ task_item.item_name }}">delete</a>
+			                    	 </td>{% endif %}
 			                  <td class="active"></td>
 
 			                  <td></td>
@@ -303,11 +301,36 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Do you want to delete the task?</h4>
       </div>
-            		<form action="/{{ number }}/delete_task/" method="post">	
+            		<form action="/{{ number }}/delete_item/" method="post">	
 	            {% csrf_token %}	
       <div class="modal-body">
 				<h3 id="task_desc">DELETE</h3>
-	            <input type="hidden" name="task_id" value="{{ task.id }}">
+	            <input type="hidden" name="task_item_id" value="{{ task_item.id }}">
+	       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" onclick="document.getElementById('delitem{{ task_item.id }}').submit(); return false;">DELETE</button>
+      </div>
+       </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="delItemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Do you want to delete the item?</h4>
+      </div>
+            		<form action="/{{ number }}/delete_item/" method="post">	
+	            {% csrf_token %}	
+      <div class="modal-body">
+				<h3 id="task_desc">DELETE</h3>
+	            <input type="hidden" name="task_item_id" value="{{ task_item.id }}">
 	       
       </div>
       <div class="modal-footer">
@@ -704,6 +727,12 @@
 			var taskId = $(e.relatedTarget).data('task-id');
 			var taskName = $(e.relatedTarget).data('task-desc');
 			$(e.currentTarget).find('input[name="task_id"]').val(taskId);
+			$(e.currentTarget).find('#task_desc').text(taskName);
+		});
+		$("#delItemModal").on('show.bs.modal', function(e){
+			var taskId = $(e.relatedTarget).data('task-id');
+			var taskName = $(e.relatedTarget).data('task-desc');
+			$(e.currentTarget).find('input[name="task_item_id"]').val(taskId);
 			$(e.currentTarget).find('#task_desc').text(taskName);
 		});
 		$("#allocModal").on('show.bs.modal', function(e){
