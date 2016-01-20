@@ -173,7 +173,7 @@ def default(request, default):
 	if request.method =='POST':
 		price = request.POST['contract_price']
 		Contract.price = price
-	context_dict = summary_header(number)
+	context_dict = {}
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		context_dict['contract_price'] = Contract.price
