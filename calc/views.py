@@ -113,7 +113,7 @@ def view_items(request, number=0):
 def index(request, number=0):
 	context_dict = summary_header(number)
 	tasks = Task.objects.filter(site=number)
-	task_items = TaskItem.objects.all()
+	task_items = TaskItem.objects.filter(task__site=number).order_by('item_name')
 	context_dict['tasks'] = tasks
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
@@ -328,7 +328,6 @@ def update_task(task_id):
 		task.expense_future = 0
 	else:
 		task.expense_future = task.expense_future_calculator
-
 	task.save()
 	return 0
 
@@ -344,6 +343,41 @@ def delete_task(request, number=0):
 	context_dict['number'] = number
 	return_html(request, context_dict)
 	return index(request, number)
+
+@login_required(login_url='/login/')
+def pay_invoice(request, number=0):
+	context_dict = summary_header(number)
+	if request.method =='POST':
+		task_item_id = int(request.POST['item_id'])
+		contractor_paid = request.POST['contractor_paid']
+		contractor_paid_date = request.POST['contractor_paid_date']
+		task_item = TaskItem.objects.get(id = task_item_id)
+		task_item.contractor_paid = contractor_paid
+		task_item.contractor_paid_date = contractor_paid_date
+		task_item.save()
+	context_dict['tasks']=Task.objects.filter(site=number)
+	context_dict['task_items'] = TaskItem.objects.all()
+	context_dict['number'] = number
+	return_html(request, context_dict)
+	return index(request, number)
+
+@login_required(login_url='/login/')
+def input_quote(request, number=0):
+	context_dict = summary_header(number)
+	if request.method =='POST':
+		task_id = int(request.POST['task_id'])
+		costs_quoted = request.POST['costs_quoted']
+		highest_quote = request.POST['highest_quote']
+		task = Task.objects.get(id = task_id)
+		task.costs_quoted = costs_quoted
+		task.highest_quote = highest_quote
+		task.save()
+	context_dict['tasks']=Task.objects.filter(site=number)
+	context_dict['task_items'] = TaskItem.objects.all()
+	context_dict['number'] = number
+	return_html(request, context_dict)
+	return index(request, number)
+
 
 @login_required(login_url='/login/')
 def delete_wishlist(request):
