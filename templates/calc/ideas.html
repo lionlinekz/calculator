@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../favicon.ico">
+
+  <title>Profit calculation app</title>
+  {% load staticfiles %}
+
+  <link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEBAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQEBAQEBAQEBAAEAAQABAAAAAAAAAAAAAQABAAEAAQEBAQEBAQEBAQEAAQABAAAAAAAAAAAAAAAAAAEAAQEBAQEBAQEBAQEBAQEBAAABAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAQAUAAF/1AABABQAAf/0AAAABAAA=" rel="icon" type="image/x-icon" />
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'dashboard.css' %}" rel="stylesheet">
+  <style type="text/css">
+  @page {
+    size: {{ pagesize }};
+    margin: 1cm;
+    @frame footer {
+      -pdf-frame-content: footerContent;
+      bottom: 0cm;
+      margin-left: 9cm;
+      margin-right: 9cm;
+      height: 1cm;
+    }
+  }
+  </style>
+
+  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    </head>
+
+    <body>
+
+
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+
+
+
+
+
+
+
+
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+             <li><a href="#"></a> </li>
+             <li class="active"><a href="/Summary/">Summary</a></li>
+             <li><a href="/0/">Unit 1</a></li>
+             <li><a href="/1/">Unit 2</a></li>
+             <li><a href="/2/">Unit 3</a></li>
+             <li><a href="/3/">Unit 4</a></li>
+
+             <li><a href="/logout/">Log out</a></li>
+           </ul>
+           <div id="search">
+             <form class="navbar-form navbar-right">
+              <input  id ="keywords" type="text" class="form-control" placeholder="Search...">
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+    	<br><br><br>
+    	<div class="row">
+          <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">+ Add Idea</button>
+          <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#completeModal">Mark as completed</button>
+          <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#deleteModal">Delete an idea</button>
+        <br><br>
+        {% for idea in ideas %}
+
+          <div class="panel {% if idea.status == "Offered" %}panel-primary{% elif idea.status == "Completed" %}panel-success{% else %}panel-warning{% endif %}">
+            <div class="panel-heading">
+              <p class="panel-title"> {{ idea.name }} <span class="pull-right"> ${{ idea.cost }} </span> </p>
+            </div>
+            <div class="panel-body">
+              {{ idea.description }}<br>
+              <a class="pull-right" href="#editModal" data-toggle="modal" data-target="#editModal" data-name = "{{ idea.name }}" data-cost="{{ idea.cost }}" data-description="{{ idea.description }}" data-type="{{ idea.task_type }}" data-status="{{ idea.status }}" data-id="{{ idea.id }}"> edit </a>
+            </div>
+          </div>
+
+        {% endfor %}
+
+      </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Add idea</h4>
+          </div>
+          <form action="/ideas/" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Idea Name</label>
+                <input type="text" class="form-control" name="name">
+              </div>
+              <div class="form-group">
+                <label>Type</label>
+                  <select class="form-control" name="type">
+                    <option>New feature</option>
+                    <option>Change current</option>
+                    <option>Fix current</option>
+                  </select>
+              </div>   
+              <div class="form-group">
+                <label>Cost</label>
+                <input type="text" class="form-control" name="cost">
+              </div>     
+              <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" name="description" rows="3"></textarea>
+              </div>         
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add idea</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="modal fade" id="completeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Mark as complete</h4>
+          </div>
+          <form action="/complete_idea/" method="post">
+            {% csrf_token %}
+                        <div class="modal-body">
+
+              <div class="form-group">
+                <label>Choose idea</label>
+                  <select class="form-control" name="id">
+                    {% for idea in ideas %}
+                      <option value="{{ idea.id }}">{{ idea.name }}</option>
+                    {% endfor %}
+                  </select>
+              </div>   
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-success">Mark as finished</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Delete idea</h4>
+          </div>
+          <form action="/delete_idea/" method="post">
+            {% csrf_token %}
+                        <div class="modal-body">
+
+              <div class="form-group">
+                <label>Choose idea</label>
+                  <select class="form-control" name="id">
+                    {% for idea in ideas %}
+                      <option value="{{ idea.id }}">{{ idea.name }}</option>
+                    {% endfor %}
+                  </select>
+              </div>   
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+
+
+<!-- Button trigger modal -->
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Edit idea</h4>
+          </div>
+          <form action="/edit_idea/" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-group">
+                <label>Idea Name</label>
+                <input type="text" class="form-control" name="name" id="name">
+              </div>
+              <div class="form-group">
+                <label>Type</label>
+                  <select class="form-control" name="type" id="type">
+                    <option>New feature</option>
+                    <option>Change current</option>
+                    <option>Fix current</option>
+                  </select>
+              </div>   
+              <div class="form-group">
+                <label>Cost</label>
+                <input type="text" class="form-control" name="cost" id="cost">
+              </div>  
+                              <input type="hidden" class="form-control" name="id" id="id">
+   
+              <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" name="description" rows="3" id="description"></textarea>
+              </div>  
+              <div class="form-group">
+                <label>Status</label>
+                  <select class="form-control" name="status" id="status">
+                    <option>Offered</option>
+                    <option>Completed</option>
+                    <option>In progress</option>
+                  </select>
+              </div>        
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add idea</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="{% static 'js/vendor/holder.min.js' %}"></script>
+    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
+    <script src="{% static 'js/hilitor.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+        <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript">
+          $("#editModal").on('show.bs.modal', function(e){
+            var name = $(e.relatedTarget).data('name');
+            var description = $(e.relatedTarget).data('description');
+            var cost = $(e.relatedTarget).data('cost');
+            var type = $(e.relatedTarget).data('type');
+            var status = $(e.relatedTarget).data('status');
+            var id = $(e.relatedTarget).data('id');
+            $(e.currentTarget).find("#name").val(name);
+            $(e.currentTarget).find("#description").val(description);
+            $(e.currentTarget).find("#cost").val(cost);
+            $(e.currentTarget).find("#type").val(type);
+            $(e.currentTarget).find("#status").val(status);
+            $(e.currentTarget).find("#id").val(id);
+          });
+    </script>
+
+  </body>
+  </html>

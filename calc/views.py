@@ -2,7 +2,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from calc.models import Task
-from calc.models import TaskItem
+from calc.models import TaskItem, Idea
 from calc.models import Contract, WishList
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
@@ -18,6 +18,58 @@ from django.template import Context
 from cgi import escape
 from django.db.models import Sum
 
+
+def ideas(request):
+	context_dict = {}
+	if request.method == "POST":
+		try:
+			name = request.POST['name']
+			task_type = request.POST['type']
+			cost = request.POST['cost']
+			description = request.POST['description']
+			idea = Idea(name = name, task_type = task_type, cost = cost, description = description)
+			idea.status = "Offered"
+			idea.save()
+		except Exception as e:
+			print e
+	context_dict['ideas'] = Idea.objects.all()
+	return render(request, 'calc/ideas.html', context_dict)
+
+def edit_idea(request):
+	if request.method == "POST":
+		try:
+			idea_id = request.POST['id']
+			idea = Idea.objects.get(pk = idea_id)
+			idea.name = request.POST['name']
+			idea.task_type = request.POST['type']
+			idea.cost = request.POST['cost']
+			idea.description = request.POST['description']
+			idea.status = request.POST['status']
+			idea.save()
+		except Exception as e:
+			print e
+	return HttpResponseRedirect('/ideas/')
+
+def complete_idea(request):
+	if request.method == "POST":
+		try:
+			idea_id = request.POST['id']
+			idea = Idea.objects.get(pk = idea_id)
+			idea.status = "Completed"
+			idea.save()
+		except Exception as e:
+			print e
+	return HttpResponseRedirect('/ideas/')
+
+def delete_idea(request):
+	if request.method == "POST":
+		try:
+			idea_id = request.POST['id']
+			idea = Idea.objects.get(pk = idea_id)
+			idea.delete()
+		except Exception as e:
+			print e
+	return HttpResponseRedirect('/ideas/')
 
 
 def return_html(request, context_dict):

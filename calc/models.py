@@ -61,3 +61,16 @@ class WishList(models.Model):
 
 	def __unicode__(self):
 		return self.name
+
+class Idea(models.Model):
+	name = models.CharField(max_length = 200)
+	task_type = models.CharField(max_length = 128)
+	cost = models.FloatField(default = 0)
+	description = models.CharField(max_length = 700)
+	status = models.CharField(max_length = 128)
+
+	class Meta:
+		unique_together = ('name', 'description', 'task_type')
+
+	def __unicode__(self):
+		return self.name
