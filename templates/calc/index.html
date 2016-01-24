@@ -150,7 +150,7 @@
 							</td>{% endif %}
 							<td><strong>{{ task.stage }}</strong></td>
 							<td><strong>{{ task.item_no }}</strong></td>
-							<td width="12%"><strong>{{ task.task_name }} </strong></td>
+							<td width="12%" class="name"><strong>{{ task.task_name }} </strong></td>
 							<td><strong>{{ task.costs_estimated }}</strong></td>
 							<td><strong>{{ task.costs_quoted }}</strong></td>
 							<td><strong>{{ task.highest_quote}}</strong></td>
@@ -180,7 +180,7 @@
 						{% endif %}
 						<td class="info"><strong>{{ task.stage }}</strong></td>
 						<td class="info"><strong>{{ task.item_no }}</strong></td>
-						<td width="12%" class="info"><strong>{{ task.task_name }} </strong></td>
+						<td width="12%" class="info name"><strong>{{ task.task_name }} </strong></td>
 						<td class="warning"><strong>{{ task.costs_estimated }}</strong></td>
 						<td class="warning"><strong>{{ task.costs_quoted }}</strong></td>
 						<td class="warning"><strong>{{ task.highest_quote}}</strong></td>
@@ -709,10 +709,16 @@
 
 	<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
 	<script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
-	<script src="{% static 'js/hilitor.js' %}"></script>
+	<!--<script src="{% static 'js/hilitor.js' %}"></script>-->
+	<script src="{% static 'js/list.fuzzysearch.min.js' %}"></script>
+	<script src="{% static 'js/list.js' %}"></script>
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
 	<script type="text/javascript">
+		var monkeyList = new List('test-list', { 
+		  valueNames: ['name'], 
+		  plugins: [ ListFuzzySearch() ] 
+		});
 		var myHilitor2;
 		document.addEventListener("DOMContentLoaded", function() {
 			myHilitor2 = new Hilitor("playground");
@@ -723,7 +729,22 @@
 			if (search == "TASMANIA") {
 				$("#invis").show();
 			}
-			myHilitor2.apply(this.value);
+			 var searchitem = search;
+				if (searchitem == '' || searchitem == null || searchitem == undefined)           {
+				          $('#myTable tbody tr').show();
+				      }
+				      else {
+				          searchitem = searchitem.toUpperCase();
+				          $('#myTable tbody tr').hide();
+				          $('#myTable tbody tr').each(function () {
+				              if ($(this).text().indexOf(searchitem) > -1) {
+				                  $(this).show();
+				              }
+				          });
+				      }
+			   // Write on keyup event of keyword input element
+
+     
 		}, false);
 	</script>
 	<script>

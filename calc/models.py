@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from datetime import datetime
 
 class Contract(models.Model):
-    price = 0
+    price = 1000000
 
     def __unicode__(self):
         return self.price
