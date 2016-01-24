@@ -715,15 +715,6 @@
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 	<script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
 	<script type="text/javascript">
-		var monkeyList = new List('test-list', { 
-		  valueNames: ['name'], 
-		  plugins: [ ListFuzzySearch() ] 
-		});
-		var myHilitor2;
-		document.addEventListener("DOMContentLoaded", function() {
-			myHilitor2 = new Hilitor("playground");
-			myHilitor2.setMatchType("left");
-		}, false);
 		document.getElementById("keywords").addEventListener("keyup", function() {
 			var search = $("#keywords").val();
 			if (search == "TASMANIA") {
