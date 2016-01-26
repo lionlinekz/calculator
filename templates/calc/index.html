@@ -190,7 +190,7 @@
 						<td class="active"></td>
 						<td class="active"></td>
 						<td class="warning"><strong>{% if task.task_complete %} CLOSED {% else %} OPEN {% endif %}</td>
-						<td class="{% if task.under_quote_by > 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
+						<td class="{% if task.under_quote_by < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by }}</strong></td>
 						<td class="{% if task.under_quote_by2 < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.under_quote_by2 }}</strong></td>
 						<td class="{% if task.expense_future_calculator < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future_calculator }}</strong></td>
 						<td class="{% if task.expense_future < 0 %}danger{% else %}info{% endif %}"><strong>{{ task.expense_future }}</strong></td>

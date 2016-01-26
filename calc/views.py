@@ -99,7 +99,7 @@ def return_html(request, context_dict):
 @login_required(login_url='/login/')
 def view_all(request, number=0):
 	context_dict = summary_header(number)
-	context_dict['tasks'] = Task.objects.filter(task_complete = True, site=number)
+	context_dict['tasks'] = Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
 	if request.user.is_authenticated():
@@ -196,9 +196,6 @@ def index(request, number=0):
 
 @login_required(login_url='/login/')
 def estimate(request, number=0):
-        tasks = Task.objects.all()
-        for task in tasks:
-            update_task(task.id) 
 	context_dict = summary_header(number)
 	tasks = Task.objects.filter(site=number)
 	task_items = TaskItem.objects.all()
@@ -237,7 +234,7 @@ def default(request, default):
 		expense_future = Task.objects.all().aggregate(Sum('expense_future'))
 		client_charged = Task.objects.all().aggregate(Sum('client_charged'))
 		payment_received = Task.objects.all().aggregate(Sum('payment_received'))
-		allocations = TaskItem.objects.all().aggregate(Sum('allocation'))
+		allocations = Task.objects.all().aggregate(Sum('allocation'))
 		context_dict['costs_estimated'] = costs_estimated['costs_estimated__sum']
 		context_dict['costs_quoted'] = costs_quoted['costs_quoted__sum']
 		context_dict['expense_incurred'] = expense_incurred['expense_incurred__sum']
@@ -460,6 +457,8 @@ def allocation(request, number=0):
 def check(request):
 	context_dict = {}
 	context_dict['wishlist'] = WishList.objects.all()
+	context_dict['allocation'] = Task.objects.all().aggregate(Sum('allocation'))['allocation__sum']
+	context_dict['profit'] = Task.objects.all().aggregate(Sum('infront_cost'))['infront_cost__sum']
 	return render(request, 'calc/secret.html', context_dict)
 
 
@@ -475,6 +474,8 @@ def add_wishlist(request):
 		except Exception as e:
 			print e
 	context_dict['wishlist'] = WishList.objects.all()
+	context_dict['allocation'] = Task.objects.all().aggregate(Sum('allocation'))
+	context_dict['profit'] = Task.objects.all().aggregate(Sum('infront_cost'))
 	return render(request, 'calc/secret.html', context_dict)
 
 
