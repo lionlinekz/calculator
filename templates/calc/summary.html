@@ -1,166 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
-
-    <title>Profit calculation app</title>
-        {% load staticfiles %}
-
-<link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEBAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQEBAQEBAQEBAAEAAQABAAAAAAAAAAAAAQABAAEAAQEBAQEBAQEBAQEAAQABAAAAAAAAAAAAAAAAAAEAAQEBAQEBAQEBAQEBAQEBAAABAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAQAUAAF/1AABABQAAf/0AAAABAAA=" rel="icon" type="image/x-icon" />
-    <!-- Bootstrap core CSS -->
-    <link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="{% static 'dashboard.css' %}" rel="stylesheet">
-            <style type="text/css">
-            @page {
-                size: {{ pagesize }};
-                margin: 1cm;
-                @frame footer {
-                    -pdf-frame-content: footerContent;
-                    bottom: 0cm;
-                    margin-left: 9cm;
-                    margin-right: 9cm;
-                    height: 1cm;
-                }
-            }
-        </style>
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-
-
-
-
-
-
-		  
-
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-          	<li><a href="#"></a> </li>
-          	<li class="active"><a href="/Summary/">Summary</a></li>
-            <li><a href="/job{{ jid }}/0/">Unit 1</a></li>
-            <li><a href="/1{{ jid }}/">Unit 2</a></li>
-            <li><a href="/2{{ jid }}/">Unit 3</a></li>
-            <li><a href="/3{{ jid }}/">Unit 4</a></li>
-
-			<li><a href="/logout/">Log out</a></li>
-          </ul>
-		  <div id="search">
-			  <form class="navbar-form navbar-right">
-				<input  id ="keywords" type="text" class="form-control" placeholder="Search...">
-			  </form>
-		  </div>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container">
-    	<br><br><br><br><br><br>
-    	<div class="row">
-    		<div class="col-lg-6">
-	    		<ul class="list-group">
-				  <li class="list-group-item">
-				    <span class="badge">{{ contract_price }}</span>
-				    Contract Price
-				  </li>
-				  <li class="list-group-item">
-
-				    <span class="badge">{{ costs_estimated }}</span>
-				    Costs Estimate
-				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ costs_quoted }}</span>
-				    Costs Quote
-				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ cost_difference_quoted }}</span>
-				    Cost Difference Quoted
-				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ cost_difference_actual }}</span>
-				    Cost Difference Actual
-				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ expense_incurred }}</span>
-Expenses Incurred				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ expense_future }}</span>
-Expenses Future				  </li>
-				</ul>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="../../favicon.ico">
+	<title>Profit calculation app</title>
+	{% load staticfiles %}
+	<link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEBAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQEBAQEBAQEBAAEAAQABAAAAAAAAAAAAAQABAAEAAQEBAQEBAQEBAQEAAQABAAAAAAAAAAAAAAAAAAEAAQEBAQEBAQEBAQEBAQEBAAABAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAQAUAAF/1AABABQAAf/0AAAABAAA=" rel="icon" type="image/x-icon" />
+	<!-- Bootstrap core CSS -->
+	<link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
+	<!-- Custom styles for this template -->
+	<link href="{% static 'dashboard.css' %}" rel="stylesheet">
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
 			</div>
-			<div class="col-lg-6">
-	    		<ul class="list-group">
-				  <li class="list-group-item">
-				    <span class="badge">{{ client_charged }}</span>
-Client Charged				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ payment_received }}</span>
-Payments Received				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ payment_balance }}</span>
-Payments Balance				  </li>
-				  <li class="list-group-item">
-				    <span class="badge"></span>
-Balance To Be Invoiced				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ profit_actual }}</span>
-Profit Actual				  </li>
-				
-								  <li class="list-group-item">
-				    <span class="badge">{{ profit_potential }}</span>
-Profit Estimate				  </li>
-				  <li class="list-group-item">
-				    <span class="badge">{{ profit_estimate }}</span>
-Profit Potential				  </li>
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#"></a> </li>
+					<li class="active"><a href="/Summary/">Summary</a></li>
+					{% for job in jobs %}
+						<li><a href="/job{{ jid }}/{{ forloop.counter0 }}/">Unit {{ forloop.counter }}</a></li>
+					{% endfor %}
+					<li><a href="/logout/">Log out</a></li>
 				</ul>
+				<div id="search">
+					<form class="navbar-form navbar-right">
+						<input  id ="keywords" type="text" class="form-control" placeholder="Search...">
+					</form>
+				</div>
 			</div>
 		</div>
+	</nav>
 
-		<div class="col-lg-5  col-lg-offset-3">
+	<div class="container">
+		<br><br><br><br><br><br>
+		<div class="row">
+			<div class="col-lg-6">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<span class="badge">{{ contract_price }}</span>
+						Contract Price
+					</li>
+					<li class="list-group-item">
 
-				<form  action="/default/" method="post" class="form-inline">
-				  	  {% csrf_token %}
-			      <div class="modal-body">
-					  <div class="form-group">
-						<label for="Stage">Contract Price</label>
-						<input type="text" class="form-control" name="contract_price" value="">
-					  </div>
-			        <button type="submit" class="btn btn-primary">Save</button>
-				  </form>
-				</div>
-	</div>
-</div>
-			<!-- Button trigger modal -->
+						<span class="badge">{{ costs_estimated }}</span>
+						Costs Estimate
+					</li>
+					<li class="list-group-item">
+						<span class="badge">{{ costs_quoted }}</span>
+						Costs Quote
+					</li>
+					<li class="list-group-item">
+						<span class="badge">{{ cost_difference_quoted }}</span>
+						Cost Difference Quoted
+					</li>
+					<li class="list-group-item">
+						<span class="badge">{{ cost_difference_actual }}</span>
+						Cost Difference Actual
+					</li>
+					<li class="list-group-item">
+						<span class="badge">{{ expense_incurred }}</span>
+						Expenses Incurred				  </li>
+						<li class="list-group-item">
+							<span class="badge">{{ expense_future }}</span>
+							Expenses Future				  </li>
+						</ul>
+					</div>
+					<div class="col-lg-6">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<span class="badge">{{ client_charged }}</span>
+								Client Charged				  </li>
+								<li class="list-group-item">
+									<span class="badge">{{ payment_received }}</span>
+									Payments Received				  </li>
+									<li class="list-group-item">
+										<span class="badge">{{ payment_balance }}</span>
+										Payments Balance				  </li>
+										<li class="list-group-item">
+											<span class="badge"></span>
+											Balance To Be Invoiced				  </li>
+											<li class="list-group-item">
+												<span class="badge">{{ profit_actual }}</span>
+												Profit Actual				  </li>
+
+												<li class="list-group-item">
+													<span class="badge">{{ profit_potential }}</span>
+													Profit Estimate				  </li>
+													<li class="list-group-item">
+														<span class="badge">{{ profit_estimate }}</span>
+														Profit Potential				  </li>
+													</ul>
+												</div>
+											</div>
+
+											<div class="col-lg-5  col-lg-offset-3">
+
+												<form  action="/default/" method="post" class="form-inline">
+													{% csrf_token %}
+													<div class="modal-body">
+														<div class="form-group">
+															<label for="Stage">Contract Price</label>
+															<input type="text" class="form-control" name="contract_price" value="">
+														</div>
+														<button type="submit" class="btn btn-primary">Save</button>
+													</form>
+												</div>
+											</div>
+										</div>
+										<!-- Button trigger modal -->
 
 
 
@@ -174,71 +135,71 @@ Profit Potential				  </li>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="{% static 'js/vendor/holder.min.js' %}"></script>
-	    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
-	<script src="{% static 'js/hilitor.js' %}"></script>
+    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
+    <script src="{% static 'js/hilitor.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
-	<script type="text/javascript">
-	  var myHilitor2;
-	  document.addEventListener("DOMContentLoaded", function() {
-		myHilitor2 = new Hilitor("playground");
-		myHilitor2.setMatchType("left");
-	  }, false);
-	  document.getElementById("keywords").addEventListener("keyup", function() {
-		myHilitor2.apply(this.value);
-	  }, false);
-	</script>
-	<script type="text/javascript">
-			$("#editModal").on('show.bs.modal', function(e){
-			var itemId = $(e.relatedTarget).data('item-id');
-			var itemNo = $(e.relatedTarget).data('item-no');
-			var itemName = $(e.relatedTarget).data('item-name');
-			var itemExpeseIncurred = $(e.relatedTarget).data('item-expense-incurred');
-			var itemInvoiceNo = $(e.relatedTarget).data('item-invoice-no');
-			var itemTradeContractor = $(e.relatedTarget).data('item-trade-contractor');
-			var itemContractorPaid = $(e.relatedTarget).data('item-contractor-paid');
-			var itemContractorPaidDate = new Date($(e.relatedTarget).data('item-contractor-paid-date'));
-			var itemAllocation = $(e.relatedTarget).data('item-allocation'); 
-			var itemTaskName = $(e.relatedTarget).data('item-task-name'); 
-			var itemTaskId = $(e.relatedTarget).data('item-task-id'); 
-			var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
-			var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
-			var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
-			$(e.currentTarget).find('input[name="item_id"]').val(itemId);
-			$(e.currentTarget).find('input[name="item_number"]').val(itemNo);
-			$(e.currentTarget).find('input[name="item_name"]').val(itemName);
-			$(e.currentTarget).find('input[name="expense_incurred"]').val(itemExpeseIncurred);
-			$(e.currentTarget).find('input[name="invoice_number"]').val(itemInvoiceNo);
-			$(e.currentTarget).find('input[name="trade_contractor"]').val(itemTradeContractor);
-			$(e.currentTarget).find('input[name="contractor_paid"]').val(itemContractorPaid);
-			$(e.currentTarget).find('input[name="contractor_paid_date"]').val(date);
-			$(e.currentTarget).find('input[name="item_allocation"]').val(itemAllocation);
-		});
-		$("#editTaskModal").on('show.bs.modal', function(e){
-			var taskId = $(e.relatedTarget).data('task-id');
-			var taskStage = $(e.relatedTarget).data('task-stage');
-			var taskNumber = $(e.relatedTarget).data('task-number');
-			var taskName = $(e.relatedTarget).data('task-name');
-			var costEstimated = $(e.relatedTarget).data('task-costs-estimated');
-			var costQuoted = $(e.relatedTarget).data('task-cost-quoted');
-			var highestQuote = $(e.relatedTarget).data('task-highest-quote');
-			var clientCharged = $(e.relatedTarget).data('task-client-charged');
-			var paymentReceived = $(e.relatedTarget).data('task-payment-received'); 
-			var paymentDate = new Date($(e.relatedTarget).data('task-payment-date')); 
-			var day = ("0" + paymentDate.getDate()).slice(-2);
-			var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
-			var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
-			$(e.currentTarget).find('input[name="task_id"]').val(taskId);
-			$(e.currentTarget).find('input[name="stage"]').val(taskStage);
-			$(e.currentTarget).find('input[name="task_number"]').val(taskNumber);
-			$(e.currentTarget).find('input[name="task_name"]').val(taskName);
-			$(e.currentTarget).find('input[name="cost_quoted"]').val(costQuoted);
-			$(e.currentTarget).find('input[name="highest_quote"]').val(highestQuote);
-			$(e.currentTarget).find('input[name="cost_estimated"]').val(costEstimated);
-			$(e.currentTarget).find('input[name="client_charged"]').val(clientCharged);
-			$(e.currentTarget).find('input[name="payment_received"]').val(paymentReceived);
-			$(e.currentTarget).find('input[name="payment_date"]').val(date);
-		});
-	</script>
-  </body>
+    <script type="text/javascript">
+    var myHilitor2;
+    document.addEventListener("DOMContentLoaded", function() {
+    	myHilitor2 = new Hilitor("playground");
+    	myHilitor2.setMatchType("left");
+    }, false);
+    document.getElementById("keywords").addEventListener("keyup", function() {
+    	myHilitor2.apply(this.value);
+    }, false);
+    </script>
+    <script type="text/javascript">
+    $("#editModal").on('show.bs.modal', function(e){
+    	var itemId = $(e.relatedTarget).data('item-id');
+    	var itemNo = $(e.relatedTarget).data('item-no');
+    	var itemName = $(e.relatedTarget).data('item-name');
+    	var itemExpeseIncurred = $(e.relatedTarget).data('item-expense-incurred');
+    	var itemInvoiceNo = $(e.relatedTarget).data('item-invoice-no');
+    	var itemTradeContractor = $(e.relatedTarget).data('item-trade-contractor');
+    	var itemContractorPaid = $(e.relatedTarget).data('item-contractor-paid');
+    	var itemContractorPaidDate = new Date($(e.relatedTarget).data('item-contractor-paid-date'));
+    	var itemAllocation = $(e.relatedTarget).data('item-allocation'); 
+    	var itemTaskName = $(e.relatedTarget).data('item-task-name'); 
+    	var itemTaskId = $(e.relatedTarget).data('item-task-id'); 
+    	var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
+    	var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
+    	var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
+    	$(e.currentTarget).find('input[name="item_id"]').val(itemId);
+    	$(e.currentTarget).find('input[name="item_number"]').val(itemNo);
+    	$(e.currentTarget).find('input[name="item_name"]').val(itemName);
+    	$(e.currentTarget).find('input[name="expense_incurred"]').val(itemExpeseIncurred);
+    	$(e.currentTarget).find('input[name="invoice_number"]').val(itemInvoiceNo);
+    	$(e.currentTarget).find('input[name="trade_contractor"]').val(itemTradeContractor);
+    	$(e.currentTarget).find('input[name="contractor_paid"]').val(itemContractorPaid);
+    	$(e.currentTarget).find('input[name="contractor_paid_date"]').val(date);
+    	$(e.currentTarget).find('input[name="item_allocation"]').val(itemAllocation);
+    });
+$("#editTaskModal").on('show.bs.modal', function(e){
+	var taskId = $(e.relatedTarget).data('task-id');
+	var taskStage = $(e.relatedTarget).data('task-stage');
+	var taskNumber = $(e.relatedTarget).data('task-number');
+	var taskName = $(e.relatedTarget).data('task-name');
+	var costEstimated = $(e.relatedTarget).data('task-costs-estimated');
+	var costQuoted = $(e.relatedTarget).data('task-cost-quoted');
+	var highestQuote = $(e.relatedTarget).data('task-highest-quote');
+	var clientCharged = $(e.relatedTarget).data('task-client-charged');
+	var paymentReceived = $(e.relatedTarget).data('task-payment-received'); 
+	var paymentDate = new Date($(e.relatedTarget).data('task-payment-date')); 
+	var day = ("0" + paymentDate.getDate()).slice(-2);
+	var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
+	var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
+	$(e.currentTarget).find('input[name="task_id"]').val(taskId);
+	$(e.currentTarget).find('input[name="stage"]').val(taskStage);
+	$(e.currentTarget).find('input[name="task_number"]').val(taskNumber);
+	$(e.currentTarget).find('input[name="task_name"]').val(taskName);
+	$(e.currentTarget).find('input[name="cost_quoted"]').val(costQuoted);
+	$(e.currentTarget).find('input[name="highest_quote"]').val(highestQuote);
+	$(e.currentTarget).find('input[name="cost_estimated"]').val(costEstimated);
+	$(e.currentTarget).find('input[name="client_charged"]').val(clientCharged);
+	$(e.currentTarget).find('input[name="payment_received"]').val(paymentReceived);
+	$(e.currentTarget).find('input[name="payment_date"]').val(date);
+});
+</script>
+</body>
 </html>

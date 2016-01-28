@@ -19,7 +19,7 @@ class Job(models.Model):
 		return self.name
 
 class Task(models.Model):
-	job = models.ForeignKey(Job, default=0)
+	job = models.ForeignKey(Job, default=1)
 	site = models.IntegerField(default=0)
 	stage = models.CharField(max_length=128)
 	item_no = models.CharField(max_length=10)

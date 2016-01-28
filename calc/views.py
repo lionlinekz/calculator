@@ -243,38 +243,41 @@ def start(request):
 def default(request, default, jid=0):
 	if request.method =='POST':
 		price = request.POST['contract_price']
-		Contract.price = price
+		job = Job.objects.get(pk=jid)
+		job.cost = price
+		job.save()
 	context_dict = {}
 	if request.user.is_authenticated():
-		context_dict['user'] = request.user
-		context_dict['contract_price'] = Contract.price
-		is_admin = request.user.groups.filter(name='Full Access').exists()
-		context_dict['is_admin'] = is_admin
-		costs_estimated = Task.objects.all().aggregate(Sum('costs_estimated'))
-		costs_quoted = Task.objects.all().aggregate(Sum('costs_quoted'))
-		expense_incurred = Task.objects.all().aggregate(Sum('expense_incurred'))
-		expense_future = Task.objects.all().aggregate(Sum('expense_future'))
-		client_charged = Task.objects.all().aggregate(Sum('client_charged'))
-		payment_received = Task.objects.all().aggregate(Sum('payment_received'))
-		allocations = Task.objects.all().aggregate(Sum('allocation'))
-		context_dict['costs_estimated'] = costs_estimated['costs_estimated__sum']
-		context_dict['costs_quoted'] = costs_quoted['costs_quoted__sum']
-		context_dict['expense_incurred'] = expense_incurred['expense_incurred__sum']
-		context_dict['expense_future'] = expense_future['expense_future__sum']
-		context_dict['client_charged'] = client_charged['client_charged__sum']
-		context_dict['payment_received'] = payment_received['payment_received__sum']
-		context_dict['allocations'] = allocations['allocation__sum']
-		cost = 0
-		tasks = Task.objects.all()
-		for task in tasks:
-			if task.costs_quoted == 0:
-				cost = cost + task.costs_estimated
-			else:
-				cost = cost + task.costs_quoted
-		context_dict['cost_difference_actual'] = cost - context_dict['expense_incurred']
-		context_dict['profit_actual'] = int(Contract.price) - expense_incurred['expense_incurred__sum']
-		context_dict['profit_potential'] = int(Contract.price) - costs_quoted['costs_quoted__sum']
-		context_dict['profit_estimate'] = int(Contract.price) - costs_estimated['costs_estimated__sum']
+		try:
+			context_dict['user'] = request.user
+			context_dict['contract_price'] = Job.objects.get(pk=jid).cost
+			tasks = Task.objects.filter(job=jid)
+			costs_estimated = tasks.aggregate(Sum('costs_estimated'))
+			costs_quoted = tasks.aggregate(Sum('costs_quoted'))
+			expense_incurred = tasks.aggregate(Sum('expense_incurred'))
+			expense_future = tasks.aggregate(Sum('expense_future'))
+			client_charged = tasks.aggregate(Sum('client_charged'))
+			payment_received = tasks.aggregate(Sum('payment_received'))
+			allocations = tasks.aggregate(Sum('allocation'))
+			context_dict['costs_estimated'] = costs_estimated['costs_estimated__sum']
+			context_dict['costs_quoted'] = costs_quoted['costs_quoted__sum']
+			context_dict['expense_incurred'] = expense_incurred['expense_incurred__sum']
+			context_dict['expense_future'] = expense_future['expense_future__sum']
+			context_dict['client_charged'] = client_charged['client_charged__sum']
+			context_dict['payment_received'] = payment_received['payment_received__sum']
+			context_dict['allocations'] = allocations['allocation__sum']
+			cost = 0
+			for task in tasks:
+				if task.costs_quoted == 0:
+					cost = cost + task.costs_estimated
+				else:
+					cost = cost + task.costs_quoted
+			context_dict['cost_difference_actual'] = cost - context_dict['expense_incurred']
+			context_dict['profit_actual'] = int(Contract.price) - expense_incurred['expense_incurred__sum']
+			context_dict['profit_potential'] = int(Contract.price) - costs_quoted['costs_quoted__sum']
+			context_dict['profit_estimate'] = int(Contract.price) - costs_estimated['costs_estimated__sum']
+		except Exception as e:
+			print e
 		context_dict['jid'] = jid
 	return render(request, 'calc/summary.html', context_dict)
 
