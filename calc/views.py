@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from calc.models import Task
 from calc.models import TaskItem, Idea
-from calc.models import Contract, WishList
+from calc.models import Contract, WishList, Job
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -18,6 +18,24 @@ from django.template import Context
 from cgi import escape
 from django.db.models import Sum
 
+
+def jobs(request):
+	context_dict = {}
+	context_dict['jobs'] = Job.objects.all()
+	return render(request, 'calc/jobs.html', context_dict)
+
+def add_job(request):
+	if request.method == "POST":
+		try:
+			job = Job()
+			job.name = request.POST['name']
+			job.cost = request.POST['cost']
+			job.address = request.POST['address']
+			job.number = request.POST['number']
+			job.save()
+		except Exception as e:
+			print e
+		return HttpResponseRedirect('/jobs/')
 
 def ideas(request):
 	context_dict = {}
@@ -97,11 +115,12 @@ def return_html(request, context_dict):
 			return render(request, 'calc/ipad.html', context_dict)
 
 @login_required(login_url='/login/')
-def view_all(request, number=0):
+def view_all(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	context_dict['tasks'] = Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -127,13 +146,14 @@ def view_all(request, number=0):
 	return render(request, 'calc/success.html', context_dict)
 
 @login_required(login_url='/login/')
-def view_items(request, number=0):
+def view_items(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
 		context_dict['tasks'] = Task.objects.filter(id = task_id)
 		context_dict['task_items'] = TaskItem.objects.all()
 		context_dict['number'] = number
+		context_dict['jid'] = jid
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -162,13 +182,14 @@ def view_items(request, number=0):
 
 
 @login_required(login_url='/login/')
-def index(request, number=0):
+def index(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	tasks = Task.objects.filter(site=number)
 	task_items = TaskItem.objects.filter(task__site=number).order_by('item_name')
 	context_dict['tasks'] = tasks
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -195,13 +216,14 @@ def index(request, number=0):
 
 
 @login_required(login_url='/login/')
-def estimate(request, number=0):
+def estimate(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	tasks = Task.objects.filter(site=number)
 	task_items = TaskItem.objects.all()
 	context_dict['tasks'] = tasks
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	context_dict.update(summary_header(number))
         if request.method == 'POST':
             try:
@@ -218,7 +240,7 @@ def start(request):
 	return default(request, 0)
 
 @login_required(login_url='/login/')
-def default(request, default):
+def default(request, default, jid=0):
 	if request.method =='POST':
 		price = request.POST['contract_price']
 		Contract.price = price
@@ -253,11 +275,12 @@ def default(request, default):
 		context_dict['profit_actual'] = int(Contract.price) - expense_incurred['expense_incurred__sum']
 		context_dict['profit_potential'] = int(Contract.price) - costs_quoted['costs_quoted__sum']
 		context_dict['profit_estimate'] = int(Contract.price) - costs_estimated['costs_estimated__sum']
+		context_dict['jid'] = jid
 	return render(request, 'calc/summary.html', context_dict)
 
 
 @login_required(login_url='/login/')
-def add_task(request, number=0):
+def add_task(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
@@ -277,6 +300,7 @@ def add_task(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -302,7 +326,7 @@ def add_task(request, number=0):
 	return render(request, 'calc/index.html', context_dict)
 
 @login_required(login_url='/login/')
-def add_item(request, number=0):
+def add_item(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
@@ -351,7 +375,7 @@ def add_item(request, number=0):
 			return render(request, 'calc/ipad.html', context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
-def update_task(task_id):
+def update_task(task_id, jid=0):
 	task=Task.objects.get(id = task_id)
 	task_items = TaskItem.objects.filter(task=task)
 	count = 0
@@ -381,7 +405,7 @@ def update_task(task_id):
 	return 0
 
 @login_required(login_url='/login/')
-def delete_task(request, number=0):
+def delete_task(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
@@ -394,7 +418,7 @@ def delete_task(request, number=0):
 	return index(request, number)
 
 @login_required(login_url='/login/')
-def pay_invoice(request, number=0):
+def pay_invoice(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_item_id = int(request.POST['item_id'])
@@ -407,11 +431,12 @@ def pay_invoice(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return_html(request, context_dict)
 	return index(request, number)
 
 @login_required(login_url='/login/')
-def input_quote(request, number=0):
+def input_quote(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = int(request.POST['task_id'])
@@ -424,6 +449,7 @@ def input_quote(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return_html(request, context_dict)
 	return index(request, number)
 
@@ -439,7 +465,7 @@ def delete_wishlist(request):
 	return render(request, 'calc/secret.html', context_dict)
 
 @login_required(login_url='/login/')
-def allocation(request, number=0):
+def allocation(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
@@ -450,6 +476,7 @@ def allocation(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return_html(request, context_dict)
 	return index(request, number)
 
@@ -479,7 +506,7 @@ def add_wishlist(request):
 	return render(request, 'calc/secret.html', context_dict)
 
 
-def delete_item(request, number=0):
+def delete_item(request, number=0, jid=0):
 	context_dict = {}
 	if request.method =='POST':
 		try:
@@ -491,11 +518,12 @@ def delete_item(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return_html(request, context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 @login_required(login_url='/login/')
-def edit_task(request, number=0):
+def edit_task(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
@@ -531,11 +559,12 @@ def edit_task(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return_html(request, context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
 @login_required(login_url='/login/')
-def edit_item(request, number=0):
+def edit_item(request, number=0, jid=0):
 	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
@@ -564,6 +593,7 @@ def edit_item(request, number=0):
 	context_dict['tasks']=Task.objects.filter(site=number)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return_html(request, context_dict)
 	return render(request, 'calc/index.html', context_dict)
 
@@ -658,12 +688,13 @@ def render_to_pdf(template_src, context_dict):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
 
-def pdfView(request, number = 0):
+def pdfView(request, number = 0, jid=0):
     #Retrieve data or whatever you need
     context_dict = {}
     context_dict['tasks']=Task.objects.filter(site=number)
     context_dict['task_items'] = TaskItem.objects.all()
     context_dict['number'] = number
+    context_dict['jid'] = jid
     context_dict['pagesize'] = 'A3 landscape'
     return render_to_pdf(
             'calc/pdf.html',

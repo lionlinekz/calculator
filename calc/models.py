@@ -8,7 +8,18 @@ class Contract(models.Model):
     def __unicode__(self):
         return self.price
 
+
+class Job(models.Model):
+	number = models.IntegerField(default=0)
+	name = models.CharField(max_length=128, default="client")
+	address = models.CharField(max_length=512, default="Australia")
+	cost = models.IntegerField(default=0)
+
+	def __unicode__(self):
+		return self.name
+
 class Task(models.Model):
+	job = models.ForeignKey(Job, default=0)
 	site = models.IntegerField(default=0)
 	stage = models.CharField(max_length=128)
 	item_no = models.CharField(max_length=10)

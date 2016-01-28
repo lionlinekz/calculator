@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="../../favicon.ico">
+
+	<title>Profit calculation app</title>
+	{% load staticfiles %}
+
+	<link href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAA/4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEBAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQABAQEAAQEBAAEAAQABAQEAAQEBAAEBAQABAAEAAAAAAAAAAAAAAAAAAQABAAEBAQEBAQEBAQEBAAEAAQABAAAAAAAAAAAAAQABAAEAAQEBAQEBAQEBAQEAAQABAAAAAAAAAAAAAAAAAAEAAQEBAQEBAQEBAQEBAQEBAAABAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAREUAAERFAAB//QAAQAUAAF/1AABABQAAf/0AAAABAAA=" rel="icon" type="image/x-icon" />
+	<!-- Bootstrap core CSS -->
+	<link href="{% static 'css/bootstrap.min2.css' %}" rel="stylesheet">
+	<link href="{% static 'dashboard.css' %}" rel="stylesheet">
+</head>
+<body>
+  	<nav class="navbar navbar-inverse navbar-fixed-top">
+  		<div class="container-fluid">
+  			<div class="navbar-header">
+  				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+  					<span class="sr-only">Toggle navigation</span>
+  					<span class="icon-bar"></span>
+  					<span class="icon-bar"></span>
+  					<span class="icon-bar"></span>
+  				</button>
+  			</div>
+  			<div id="navbar" class="navbar-collapse collapse">
+  				<ul class="nav navbar-nav navbar-right">
+  					<li><a href="/logout/">Log out</a></li>
+  				</ul>
+  			</div>
+  		</div>
+  	</nav>
+  	<div class="container">
+  		<br><br><br>
+  		<button class="btn btn-primary" data-toggle="modal" data-target="#addModal">+ Add new job</button><br><br>
+  		<div class="list-group">
+  			{% for job in jobs %}
+	  			<a href="/job{{ job.id }}/j" class="list-group-item">
+	  				<h4 class="list-group-item-heading">{{ job.name }}, ${{ job.cost }}, {{ job.number }} units</h4>
+	  				<p class="list-group-item-text">{{ job.address }}</p>
+	  			</a>
+	  		{% endfor %}
+  		</div>
+  	</div>
+
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Add job</h4>
+          </div>
+          <form action="/add_job/" method="post">
+            {% csrf_token %}
+              <div class="modal-body">
+              <div class="form-group">
+                <label>Clients name</label>
+                <input type="text" class="form-control" name="name">
+              </div> 
+              <div class="form-group">
+                <label>Address</label>
+                <textarea class="form-control" name="address" rows="3"></textarea>
+              </div> 
+              <div class="form-group">
+                <label>Number of units</label>
+                <select class="form-control" name="number">
+				  <option>1</option>
+				  <option>2</option>
+				  <option>3</option>
+				  <option>4</option>
+				  <option>5</option>
+				</select>
+              </div> 
+              <div class="form-group">
+                <label>Contract Price</label>
+                <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="text" class="form-control" name="cost">
+                </div>
+              </div>     
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="{% static 'js/vendor/holder.min.js' %}"></script>
+    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
+    <script src="{% static 'js/hilitor.js' %}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+</body>
+</html>
