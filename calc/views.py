@@ -116,11 +116,13 @@ def return_html(request, context_dict):
 
 @login_required(login_url='/login/')
 def view_all(request, number=0, jid=0):
-	context_dict = summary_header(number)
-	context_dict['tasks'] = Task.objects.filter(site=number)
+	job = Job.objects.get(pk=jid)
+	context_dict = summary_header(number, jid)
+	context_dict['tasks'] = Task.objects.filter(site=number, job=jid)
 	context_dict['task_items'] = TaskItem.objects.all()
 	context_dict['number'] = number
 	context_dict['jid'] = jid
+	context_dict['units'] = create_list(job.number)
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -147,10 +149,12 @@ def view_all(request, number=0, jid=0):
 
 @login_required(login_url='/login/')
 def view_items(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	job = Job.objects.get(pk=jid)
+	context_dict = summary_header(number, jid)
+	context_dict['units'] = create_list(job.number)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
-		context_dict['tasks'] = Task.objects.filter(id = task_id)
+		context_dict['tasks'] = Task.objects.filter(id = task_id, job=jid)
 		context_dict['task_items'] = TaskItem.objects.all()
 		context_dict['number'] = number
 		context_dict['jid'] = jid
@@ -179,17 +183,24 @@ def view_items(request, number=0, jid=0):
 	return render(request, 'calc/success.html', context_dict)
 
 
+def create_list(number):
+	number_list = []
+	for i in range(number):
+		number_list.append(str(i))
+	return number_list
 
 
 @login_required(login_url='/login/')
 def index(request, number=0, jid=0):
-	context_dict = summary_header(number)
-	tasks = Task.objects.filter(site=number)
+	job = Job.objects.get(pk=jid)
+	context_dict = summary_header(number, jid)
+	tasks = Task.objects.filter(site=number, job=jid)
 	task_items = TaskItem.objects.filter(task__site=number).order_by('item_name')
 	context_dict['tasks'] = tasks
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
 	context_dict['jid'] = jid
+	context_dict['units'] = create_list(job.number)
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -217,14 +228,16 @@ def index(request, number=0, jid=0):
 
 @login_required(login_url='/login/')
 def estimate(request, number=0, jid=0):
-	context_dict = summary_header(number)
-	tasks = Task.objects.filter(site=number)
+	context_dict = summary_header(number, jid)
+	job = Job.objects.get(pk=jid)
+	context_dict['jid'] = jid
+	context_dict['units'] = create_list(job.number)
+	tasks = Task.objects.filter(site=number, job=jid)
 	task_items = TaskItem.objects.all()
 	context_dict['tasks'] = tasks
 	context_dict['task_items'] = task_items
 	context_dict['number'] = number
-	context_dict['jid'] = jid
-	context_dict.update(summary_header(number))
+	context_dict.update(summary_header(number, jid))
         if request.method == 'POST':
             try:
                 for task in tasks:
@@ -241,9 +254,9 @@ def start(request):
 
 @login_required(login_url='/login/')
 def default(request, default, jid=0):
+	job = Job.objects.get(pk=jid)
 	if request.method =='POST':
 		price = request.POST['contract_price']
-		job = Job.objects.get(pk=jid)
 		job.cost = price
 		job.save()
 	context_dict = {}
@@ -279,12 +292,13 @@ def default(request, default, jid=0):
 		except Exception as e:
 			print e
 		context_dict['jid'] = jid
+		context_dict['units'] = range(job.number)
 	return render(request, 'calc/summary.html', context_dict)
 
 
 @login_required(login_url='/login/')
 def add_task(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	context_dict = summary_header(number, jid)
 	if request.method =='POST':
 		try:
 			stage = request.POST['stage']
@@ -300,37 +314,11 @@ def add_task(request, number=0, jid=0):
 			task.save()
 		except Exception as e:
 			print e
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	if request.user.is_authenticated():
-		context_dict['user'] = request.user
-		is_admin = request.user.groups.filter(name='Full Access').exists()
-		is_input = request.user.groups.filter(name='Input Only').exists()
-		is_view_all = request.user.groups.filter(name='View all').exists()
-		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
-		context_dict['is_admin'] = is_admin
-		context_dict['is_input'] = is_input
-		context_dict['is_view_all'] = is_view_all
-		context_dict['is_view_dashboard'] = is_view_dashboard
-		if request.user.groups.filter(name='Michael').exists():
-			return render(request, 'calc/michael.html', context_dict)
-		if request.user.groups.filter(name='Tayla').exists():
-			return render(request, 'calc/tayla.html', context_dict)
-		if request.user.groups.filter(name='Maria').exists():
-			return render(request, 'calc/maria.html', context_dict)
-		if request.user.groups.filter(name='Tracy').exists():
-			return render(request, 'calc/tracy.html', context_dict)
-		if request.user.groups.filter(name='Phone').exists():
-			return render(request, 'calc/phone.html', context_dict)
-		if request.user.groups.filter(name='Ipad').exists():
-			return render(request, 'calc/ipad.html', context_dict)
-	return render(request, 'calc/index.html', context_dict)
+	return index(request, number, jid)
 
 @login_required(login_url='/login/')
 def add_item(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	context_dict = summary_header(number, jid)
 	if request.method =='POST':
 		try:
 			task_id = int(request.POST['task'])
@@ -351,32 +339,7 @@ def add_item(request, number=0, jid=0):
 		except Exception as e:
 			print e
 		update_task(task_id)
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	if request.user.is_authenticated():
-		context_dict['user'] = request.user
-		is_admin = request.user.groups.filter(name='Full Access').exists()
-		is_input = request.user.groups.filter(name='Input Only').exists()
-		is_view_all = request.user.groups.filter(name='View all').exists()
-		is_view_dashboard = request.user.groups.filter(name='View dashboard').exists()		
-		context_dict['is_admin'] = is_admin
-		context_dict['is_input'] = is_input
-		context_dict['is_view_all'] = is_view_all
-		context_dict['is_view_dashboard'] = is_view_dashboard
-		if request.user.groups.filter(name='Michael').exists():
-			return render(request, 'calc/michael.html', context_dict)
-		if request.user.groups.filter(name='Tayla').exists():
-			return render(request, 'calc/tayla.html', context_dict)
-		if request.user.groups.filter(name='Maria').exists():
-			return render(request, 'calc/maria.html', context_dict)
-		if request.user.groups.filter(name='Tracy').exists():
-			return render(request, 'calc/tracy.html', context_dict)
-		if request.user.groups.filter(name='Phone').exists():
-			return render(request, 'calc/phone.html', context_dict)
-		if request.user.groups.filter(name='Ipad').exists():
-			return render(request, 'calc/ipad.html', context_dict)
-	return render(request, 'calc/index.html', context_dict)
+	return index(request, number, jid)
 
 def update_task(task_id, jid=0):
 	task=Task.objects.get(id = task_id)
@@ -409,20 +372,16 @@ def update_task(task_id, jid=0):
 
 @login_required(login_url='/login/')
 def delete_task(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	context_dict = summary_header(number, jid)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
 		task = Task.objects.get(id = task_id)
 		task.delete()
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	return_html(request, context_dict)
-	return index(request, number)
+	return index(request, number, jid)
 
 @login_required(login_url='/login/')
 def pay_invoice(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	context_dict = summary_header(number, jid)
 	if request.method =='POST':
 		task_item_id = int(request.POST['item_id'])
 		contractor_paid = request.POST['contractor_paid']
@@ -431,16 +390,11 @@ def pay_invoice(request, number=0, jid=0):
 		task_item.contractor_paid = contractor_paid
 		task_item.contractor_paid_date = contractor_paid_date
 		task_item.save()
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	return_html(request, context_dict)
-	return index(request, number)
+	return index(request, number, jid)
 
 @login_required(login_url='/login/')
 def input_quote(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	context_dict = summary_header(number, jid)
 	if request.method =='POST':
 		task_id = int(request.POST['task_id'])
 		costs_quoted = request.POST['costs_quoted']
@@ -449,12 +403,7 @@ def input_quote(request, number=0, jid=0):
 		task.costs_quoted = costs_quoted
 		task.highest_quote = highest_quote
 		task.save()
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	return_html(request, context_dict)
-	return index(request, number)
+	return index(request, number, jid)
 
 
 @login_required(login_url='/login/')
@@ -469,19 +418,14 @@ def delete_wishlist(request):
 
 @login_required(login_url='/login/')
 def allocation(request, number=0, jid=0):
-	context_dict = summary_header(number)
+	context_dict = summary_header(number, jid)
 	if request.method =='POST':
 		task_id = request.POST['task_id']
 		task_alloc = request.POST['task_alloc']
 		task = Task.objects.get(id = task_id)
 		task.allocation = task_alloc
 		task.save()
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	return_html(request, context_dict)
-	return index(request, number)
+	return index(request, number, jid)
 
 @login_required(login_url='/login/')
 def check(request):
@@ -510,7 +454,6 @@ def add_wishlist(request):
 
 
 def delete_item(request, number=0, jid=0):
-	context_dict = {}
 	if request.method =='POST':
 		try:
 			task_item_id = request.POST['task_item_id']
@@ -518,16 +461,10 @@ def delete_item(request, number=0, jid=0):
 			taskItem.delete()
 		except Exception as e:
 			print e
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	return_html(request, context_dict)
-	return render(request, 'calc/index.html', context_dict)
+	return index(request, number, jid)
 
 @login_required(login_url='/login/')
 def edit_task(request, number=0, jid=0):
-	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
 			task_id = request.POST['task_id']
@@ -559,16 +496,10 @@ def edit_task(request, number=0, jid=0):
 			update_task(task_id)
 		except Exception as e:
 			print e
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	return_html(request, context_dict)
-	return render(request, 'calc/index.html', context_dict)
+	return index(request, number, jid)
 
 @login_required(login_url='/login/')
 def edit_item(request, number=0, jid=0):
-	context_dict = summary_header(number)
 	if request.method =='POST':
 		try:
 			item_id = int(request.POST['item_id'])
@@ -593,12 +524,7 @@ def edit_item(request, number=0, jid=0):
 			update_task(item.task.id)
 		except Exception as e:
 			print e
-	context_dict['tasks']=Task.objects.filter(site=number)
-	context_dict['task_items'] = TaskItem.objects.all()
-	context_dict['number'] = number
-	context_dict['jid'] = jid
-	return_html(request, context_dict)
-	return render(request, 'calc/index.html', context_dict)
+	return index(request, number, jid)
 
 def user_login(request):
     # Like before, obtain the context for the user's request.
@@ -650,11 +576,11 @@ def user_logout(request):
     logout(request)
 
     # Take the user back to the homepage.
-    return HttpResponseRedirect('/0/')
+    return HttpResponseRedirect('/login/')
 
-def summary_header(number):
+def summary_header(number, jid):
 	context_dict = {}
-	tasks = Task.objects.filter(site=number)
+	tasks = Task.objects.filter(site=number, job=jid)
 	task_items = TaskItem.objects.filter(task__site=number)
 	costs_estimated = tasks.aggregate(Sum('costs_estimated'))
 	costs_quoted = tasks.aggregate(Sum('costs_quoted'))

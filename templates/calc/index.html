@@ -52,7 +52,7 @@
 					<li><a  href="#inputQuoteModal"  data-toggle="modal" data-target="#inputQuoteModal">+ENTER INVOICE</a></li>
 					<li><a  href="#itemModal"  data-toggle="modal" data-target="#itemModal">+NEW PAYMENT</a></li>
 					<li><a  href="#payModal"  data-toggle="modal" data-target="#payModal">+PAY INVOICE</a></li>
-					<li><a  href="/{{ number }}/pdfView/"> EXPORT TO PDF</a></li>
+					<li><a  href="/job{{ jid }}/{{ number }}/pdfView/"> EXPORT TO PDF</a></li>
 					<li><a  id="invis" href="/check/">wishlist</a></li>
 				</ul>
 				{% endif %} 
@@ -61,13 +61,11 @@
 			<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="#"></a> </li>
-					<li><a href="/{{ number }}/estimate/">Enter Costs Estimated</a></li>
-					<li><a href="/Summary/">Summary</a></li>
-					<li {% if number == '0' %} class="active" {% endif %}><a href="/0/">Unit 1</a></li> 
-					<li {% if number == '1' %}  class="active" {% endif %}><a href="/1/">Unit 2</a></li>
-					<li {% if number == '2' %} class="active" {% endif %}><a href="/2/">Unit 3</a></li>
-					<li {% if number == '3' %} class="active" {% endif %}><a href="/3/">Unit 4</a></li>
-					<li><a href="/ideas/">Ideas</a></li>
+					<li><a href="/job{{ jid }}/{{ number }}/estimate/">Enter Costs Estimated</a></li>
+					<li><a href="/job{{ jid }}/Summary/">Summary</a></li>
+					{% for unit in units %}
+						<li {% if number == unit %} class="active" {% endif %}><a href="/job{{ jid }}/{{ forloop.counter0 }}/">Unit {{ forloop.counter }}</a></li>
+					{% endfor %}
 					<li><a href="/logout/">Log out</a></li>
 				</ul>
 				<div id="search">
@@ -87,7 +85,7 @@
 					<table id="myTable" class="table  table-fixedheader ">
 						<thead>
 							<tr>
-								{% if is_admin  %} <th><a href="/{{ number }}/view_all/">view all</a></th> {% endif %}
+								{% if is_admin  %} <th><a href="/job{{ jid }}/{{ number }}/view_all/">view all</a></th> {% endif %}
 								<th>1<br><br>Stage</th>
 								<th>2<br><br>Item No.</th>
 								<th width="12%">3<br><br>Task Description</th>
@@ -141,7 +139,7 @@
 							{% if task.task_complete %}
 							<tr class="success">
 								{% if is_admin  %}<td><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a><br>
-								<form id="viewform{{ task.id }}" action="/{{ number }}/view_items/" method="post">	
+								<form id="viewform{{ task.id }}" action="/job{{ jid }}/{{ number }}/view_items/" method="post">	
 									{% csrf_token %}		
 									<input type="hidden" name="task_id" value="{{ task.id }}">
 									<a href="javascript:{}" onclick="document.getElementById('viewform{{ task.id }}').submit(); return false;">view</a>
@@ -260,7 +258,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Add task/Estimate</h4>
 			</div>
-			<form  action="/{{ number }}/add_task/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/add_task/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 
@@ -306,7 +304,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Do you want to delete the task?</h4>
 			</div>
-			<form action="/{{ number }}/delete_item/" method="post">	
+			<form action="/job{{ jid }}/{{ number }}/delete_item/" method="post">	
 				{% csrf_token %}	
 				<div class="modal-body">
 					<h3 id="task_desc">DELETE</h3>
@@ -331,7 +329,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Do you want to delete the item?</h4>
 			</div>
-			<form action="/{{ number }}/delete_item/" method="post">	
+			<form action="/job{{ jid }}/{{ number }}/delete_item/" method="post">	
 				{% csrf_token %}	
 				<div class="modal-body">
 					<h3 id="task_desc">DELETE</h3>
@@ -355,7 +353,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="allocModalLabel">Please enter the sum you want to allocate?</h4>
 			</div>
-			<form action="/{{ number }}/allocation/" method="post">	
+			<form action="/job{{ jid }}/{{ number }}/allocation/" method="post">	
 				{% csrf_token %}	
 				<div class="modal-body">
 					<h4 id="task_alloc">allocation</h4>
@@ -379,7 +377,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">New payment</h4>
 			</div>
-			<form  action="/{{ number }}/add_item/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/add_item/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 					<div class="form-group">
@@ -440,7 +438,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Pay invoice</h4>
 			</div>
-			<form  action="/{{ number }}/pay_invoice/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/pay_invoice/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 
@@ -481,7 +479,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Enter invoice</h4>
 			</div>
-			<form  action="/{{ number }}/add_item/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/add_item/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 
@@ -533,7 +531,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Input Quote</h4>
 			</div>
-			<form  action="/{{ number }}/input_quote/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/input_quote/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 
@@ -572,7 +570,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Edit task</h4>
 			</div>
-			<form  action="/{{ number }}/edit_task/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/edit_task/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 
@@ -642,7 +640,7 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Edit item</h4>
 			</div>
-			<form  action="/{{ number }}/edit_item/" method="post">
+			<form  action="/job{{ jid }}/{{ number }}/edit_item/" method="post">
 				{% csrf_token %}
 				<div class="modal-body">
 
@@ -717,7 +715,7 @@
 	<script type="text/javascript">
 		document.getElementById("keywords").addEventListener("keyup", function() {
 			var search = $("#keywords").val();
-			if (search == "TASMANIA") {
+			if (search == "VERTIGO") {
 				$("#invis").show();
 			}
 			 var searchitem = search;

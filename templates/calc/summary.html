@@ -26,12 +26,15 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="/jobs/">All jobs</a></li>
+				</ul>
 			</div>
 			<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav navbar-right">
 					<li><a href="#"></a> </li>
 					<li class="active"><a href="/Summary/">Summary</a></li>
-					{% for job in jobs %}
+					{% for unit in units %}
 						<li><a href="/job{{ jid }}/{{ forloop.counter0 }}/">Unit {{ forloop.counter }}</a></li>
 					{% endfor %}
 					<li><a href="/logout/">Log out</a></li>
@@ -109,7 +112,7 @@
 
 											<div class="col-lg-5  col-lg-offset-3">
 
-												<form  action="/default/" method="post" class="form-inline">
+												<form  action="/job{{ jid }}/default/" method="post" class="form-inline">
 													{% csrf_token %}
 													<div class="modal-body">
 														<div class="form-group">

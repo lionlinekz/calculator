@@ -48,6 +48,7 @@ urlpatterns = patterns('',
     url(r'^job(?P<jid>[0-9]+)/(?P<number>[0-9]+)', views.index, name='index'),
     url(r'^job(?P<jid>[0-9]+)/(?P<default>\w+)', views.default), 
     url(r'^$', views.jobs),
+    url(r'^', views.jobs),
 # ADD THIS NEW TUPLE!
 )
 
