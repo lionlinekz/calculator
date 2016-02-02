@@ -17,6 +17,7 @@ from django.template.loader import get_template
 from django.template import Context
 from cgi import escape
 from django.db.models import Sum
+import csv
 
 
 def jobs(request):
@@ -26,15 +27,26 @@ def jobs(request):
 
 def add_job(request):
 	if request.method == "POST":
-		try:
-			job = Job()
-			job.name = request.POST['name']
-			job.cost = request.POST['cost']
-			job.address = request.POST['address']
-			job.number = request.POST['number']
-			job.save()
-		except Exception as e:
-			print e
+		#try:
+		job = Job()
+		job.name = request.POST['name']
+		job.cost = request.POST['cost']
+		job.address = request.POST['address']
+		job.number = request.POST['number']
+		job.save()
+		csv_filepathname="data-aset.csv"
+		for i in range(0, int(job.number)):
+			dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
+			for row in dataReader:
+				task = Task()
+				task.job = job
+				task.site = i
+				task.stage = row[0]
+				task.item_no = row[1]
+				task.task_name = row[2]
+				task.save()
+		#except Exception as e:
+		#	print e
 		return HttpResponseRedirect('/jobs/')
 
 def ideas(request):

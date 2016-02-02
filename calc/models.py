@@ -40,7 +40,7 @@ class Task(models.Model):
 	allocation = models.FloatField(default=0)
 
 	class Meta:
-		unique_together = ('item_no', 'stage', 'site', 'task_name')
+		unique_together = ('item_no', 'stage', 'site', 'task_name', 'job')
 
 	def __unicode__(self):
 		return self.task_name
