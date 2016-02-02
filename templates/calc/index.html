@@ -726,7 +726,7 @@
 				          searchitem = searchitem.toUpperCase();
 				          $('#myTable tbody tr').hide();
 				          $('#myTable tbody tr').each(function () {
-				              if ($(this).text().indexOf(searchitem) > -1) {
+				              if ($(this).text().toUpperCase().indexOf(searchitem) > -1) {
 				                  $(this).show();
 				              }
 				          });
@@ -740,6 +740,7 @@
 		$(document).ready(function(){
 			$(function(){
 				$("#myTable").tablesorter();
+				$('#myTable thead tr').css( 'cursor', 'pointer' );
 			});
 		});
 	</script>
