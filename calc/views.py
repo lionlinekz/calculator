@@ -34,7 +34,7 @@ def add_job(request):
 		job.address = request.POST['address']
 		job.number = request.POST['number']
 		job.save()
-		csv_filepathname="data-aset.csv"
+		csv_filepathname="/home/lionline/calculator/calc/data-aset.csv"
 		for i in range(0, int(job.number)):
 			dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
 			for row in dataReader:
@@ -298,9 +298,9 @@ def default(request, default, jid=0):
 				else:
 					cost = cost + task.costs_quoted
 			context_dict['cost_difference_actual'] = cost - context_dict['expense_incurred']
-			context_dict['profit_actual'] = int(Contract.price) - expense_incurred['expense_incurred__sum']
-			context_dict['profit_potential'] = int(Contract.price) - costs_quoted['costs_quoted__sum']
-			context_dict['profit_estimate'] = int(Contract.price) - costs_estimated['costs_estimated__sum']
+			context_dict['profit_actual'] = int(job.cost) - expense_incurred['expense_incurred__sum']
+			context_dict['profit_potential'] = int(job.cost) - costs_quoted['costs_quoted__sum']
+			context_dict['profit_estimate'] = int(job.cost) - costs_estimated['costs_estimated__sum']
 		except Exception as e:
 			print e
 		context_dict['jid'] = jid
