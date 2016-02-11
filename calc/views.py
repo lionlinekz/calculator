@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from calc.models import Task
 from calc.models import TaskItem, Idea
-from calc.models import Contract, WishList, Job
+from calc.models import Contract, WishList, Job, Invoice, Payment, Stage
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -19,6 +19,13 @@ from cgi import escape
 from django.db.models import Sum
 import csv
 
+
+def payments(request, number=0, jid=0):
+	context_dict = {}
+	context_dict['stages'] = Stage.objects.all()
+	context_dict['invoices'] = Invoice.objects.all()
+	context_dict['payments'] = Payment.objects.all()
+	return render(request, 'calc/payments.html', context_dict)
 
 def jobs(request):
 	context_dict = {}

@@ -8,6 +8,30 @@ class Contract(models.Model):
     def __unicode__(self):
         return self.price
 
+class Stage(models.Model):
+	name = models.CharField(max_length=128, default="General", unique=True)
+
+	def __unicode__(self):
+		return self.name
+
+class Invoice(models.Model):
+	stage = models.ForeignKey(Stage, null=True)
+	name = models.CharField(max_length=128)
+	value = models.FloatField(default=0)
+	date = models.DateField(default=datetime.now)
+	total_paid = models.FloatField(default=0)
+
+	def __unicode__(self):
+		return self.stage
+
+class Payment(models.Model):
+	invoice = models.ForeignKey(Invoice)
+	amount = models.FloatField(default=0)
+	date = models.DateField(default=datetime.now)
+
+	def __unicode__(self):
+		return self.amount
+
 
 class Job(models.Model):
 	number = models.IntegerField(default=0)

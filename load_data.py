@@ -1,7 +1,7 @@
 # Full path and name to your csv file
-csv_filepathname="/Users/assetsarsengaliyev/Documents/calculator/data-aset.csv"
+csv_filepathname="/home/asset/calculator/data-aset.csv"
 # Full path to your django project directory
-your_djangoproject_home="/Users/assetsarsengaliyev/Documents/calculator"
+your_djangoproject_home="/home/asset/calculator"
 
 
 import django
@@ -10,16 +10,16 @@ import sys,os
 sys.path.append(your_djangoproject_home)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'calculator.settings'
 
-from calc.models import Task
+from calc.models import Stage
 
 import csv
 dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
 
 for row in dataReader:
-	task = Task()
-	task.site = 3
-	task.stage = row[0]
-	task.item_no = row[1]
-	task.task_name = row[2]
-	task.save()
+	try:
+		stage = Stage()
+		stage.name = row[0]
+		stage.save()
+	except Exception as e:
+		print e
 
