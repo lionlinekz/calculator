@@ -17,6 +17,8 @@ from django.template.loader import get_template
 from django.template import Context
 from cgi import escape
 from django.db.models import Sum
+from django.core.urlresolvers import reverse
+
 import csv
 
 
@@ -31,6 +33,33 @@ def payments(request, number=0, jid=0):
 	context_dict['jid'] = jid
 	return render(request, 'calc/payments.html', context_dict)
 
+def add_invoice(request, number=0, jid=0):
+	if request.method == "POST":
+		stage_id = request.POST['name']
+		value = request.POST['value']
+		date = request.POST['date']
+		stage = Stage.objects.get(pk = stage_id)
+		job = Job.objects.get(pk = jid)
+		invoice = Invoice(job = job, site = number, stage = stage, name = stage.name, value = value, date = date)
+		invoice.save()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
+
+def add_payment(request, number=0, jid=0):
+	if request.method == "POST":
+		invoice_id = request.POST['name']
+		value = request.POST['value']
+		date = request.POST['date']
+		invoice = Invoice.objects.get(pk = invoice_id)
+		payment = Payment(invoice = invoice, amount = value, date = date)
+		payment.save()
+		invoice.total_paid += float(value)
+		invoice.save()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
+
+
+
 def jobs(request):
 	context_dict = {}
 	context_dict['jobs'] = Job.objects.all()
@@ -38,26 +67,26 @@ def jobs(request):
 
 def add_job(request):
 	if request.method == "POST":
-		#try:
-		job = Job()
-		job.name = request.POST['name']
-		job.cost = request.POST['cost']
-		job.address = request.POST['address']
-		job.number = request.POST['number']
-		job.save()
-		csv_filepathname="/home/lionline/calculator/calc/data-aset.csv"
-		for i in range(0, int(job.number)):
-			dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
-			for row in dataReader:
-				task = Task()
-				task.job = job
-				task.site = i
-				task.stage = row[0]
-				task.item_no = row[1]
-				task.task_name = row[2]
-				task.save()
-		#except Exception as e:
-		#	print e
+		try:
+			job = Job()
+			job.name = request.POST['name']
+			job.cost = request.POST['cost']
+			job.address = request.POST['address']
+			job.number = request.POST['number']
+			job.save()
+			csv_filepathname="/home/lionline/calculator/calc/data-aset.csv"
+			for i in range(0, int(job.number)):
+				dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
+				for row in dataReader:
+					task = Task()
+					task.job = job
+					task.site = i
+					task.stage = row[0]
+					task.item_no = row[1]
+					task.task_name = row[2]
+					task.save()
+		except Exception as e:
+			print e
 		return HttpResponseRedirect('/jobs/')
 
 def ideas(request):

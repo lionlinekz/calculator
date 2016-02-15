@@ -59,6 +59,7 @@
 
         <ul class="nav navbar-nav navbar-right">
           <li><a  href="#addModal"  data-toggle="modal" data-target="#addModal">+ADD INVOICE</a></li>
+          <li><a  href="#paymentModal"  data-toggle="modal" data-target="#paymentModal">+ADD PAYMENT</a></li>
         </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -135,9 +136,9 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="allocModalLabel">Add item to wish list</h4>
+            <h4 class="modal-title" id="allocModalLabel">Add invoice</h4>
           </div>
-                        <form action="/jid/number/add_invoice/" method="post"> 
+                        <form action="/job{{ jid }}/{{ number }}/add_invoice/" method="post"> 
                     {% csrf_token %}    
           <div class="modal-body">
 
@@ -156,6 +157,44 @@
               </div>
                <div class="form-group">
                 <label for="Stage">Invoice Date</label>
+                <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">ADD</button>
+          </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="allocModalLabel">Add payment</h4>
+          </div>
+                        <form action="/job{{ jid }}/{{ number }}/add_payment/" method="post"> 
+                    {% csrf_token %}    
+          <div class="modal-body">
+
+                    
+              <div class="form-group">
+                <label for="Stage">Name</label>
+                  <select class="form-control" name="name">
+                  {% for invoice in invoices %}
+                    <option value="{{ invoice.id }}">{{ invoice.name }}</option>
+                  {% endfor %}
+                  </select>
+                  </div>
+                <div class="form-group">
+                <label for="Stage">Paid Amount</label>
+                <input type="text" name="value"  class="form-control">
+              </div>
+               <div class="form-group">
+                <label for="Stage">Paid Date</label>
                 <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
               </div>
           </div>
@@ -197,15 +236,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-      <script type="text/javascript">
-    $("#addModal").on('show.bs.modal', function(e){
-      var itemContractorPaidDate = new Date();
-      var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
-      var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
-      var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
-      $(e.currentTarget).find('date"]').val(date);
-    });
-</script>
+
       <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
@@ -217,7 +248,22 @@
   <script src="{% static 'js/list.js' %}"></script>
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
-
+      <script type="text/javascript">
+    $("#addModal").on('show.bs.modal', function(e){
+      var itemContractorPaidDate = new Date();
+      var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
+      var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
+      var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('#myDate').val(date);
+    });
+    $("#paymentModal").on('show.bs.modal', function(e){
+      var itemContractorPaidDate = new Date();
+      var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
+      var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
+      var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('#myDate').val(date);
+    });
+</script>
 
   </body>
 </html>
