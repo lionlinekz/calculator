@@ -23,8 +23,12 @@ import csv
 def payments(request, number=0, jid=0):
 	context_dict = {}
 	context_dict['stages'] = Stage.objects.all()
-	context_dict['invoices'] = Invoice.objects.all()
+	context_dict['invoices'] = Invoice.objects.filter(job=jid, site=number)
 	context_dict['payments'] = Payment.objects.all()
+	job = Job.objects.get(pk=jid)
+	context_dict['units'] = create_list(job.number)
+	context_dict['number'] = number
+	context_dict['jid'] = jid
 	return render(request, 'calc/payments.html', context_dict)
 
 def jobs(request):

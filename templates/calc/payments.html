@@ -57,22 +57,17 @@
             <span class="icon-bar"></span>
           </button>
 
-
-
-
-
-
-		  
-
+        <ul class="nav navbar-nav navbar-right">
+          <li><a  href="#addModal"  data-toggle="modal" data-target="#addModal">+ADD INVOICE</a></li>
+        </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
           	<li><a href="#"></a> </li>
-          	<li class="active"><a href="/Summary/">Summary</a></li>
-            <li><a href="/0/">Unit 1</a></li>
-            <li><a href="/1/">Unit 2</a></li>
-            <li><a href="/2/">Unit 3</a></li>
-            <li><a href="/3/">Unit 4</a></li>
+          	<li><a href="/job{{ jid }}/Summary/">Summary</a></li>
+            {% for unit in units %}
+              <li {% if number == unit %} class="active" {% endif %}><a href="/job{{ jid }}/{{ forloop.counter0 }}/">Unit {{ forloop.counter }}</a></li>
+            {% endfor %}
 
 			<li><a href="/logout/">Log out</a></li>
           </ul>
@@ -103,18 +98,27 @@
                         </tr>
                      </thead>
                     <tbody> 
-                        {% for wl in wishlist %}
-                        <tr> 
-                            <th scope=row>{{ forloop.counter }}</th> 
-                            <td>{{ wl.name }}</td> 
-                            <td>{{ wl.price }}</td> 
-                            <td><form action="/delete_wishlist/" method="post">    
-                                      {% csrf_token %}    
-                                      <input type="hidden" name="item_id" value="{{ wl.id }}">
-                              <button type="submit" class="btn btn-danger btn-xs" onclick="document.getElementById('delitem{{ task_item.id }}').submit(); return false;">DELETE</button>
-                             </form>
-                             </td> 
-                        </tr>
+                        {% for invoice in invoices %}
+                          <tr> 
+                              <th scope=row>{{ forloop.counter }}</th> 
+                              <td>{{ invoice.name }}</td> 
+                              <td>{{ invoice.value }}</td> 
+                              <td>{{ invoice.date }}</td> 
+                              <td>{{ invoice.total_paid }}</td>
+                              <td></td>
+                          </tr>
+                          {% for payment in payments %}
+                            {% if payment.invoice == invoice %}
+                              <tr> 
+                                  <th scope=row></th> 
+                                  <td></td> 
+                                  <td></td> 
+                                  <td></td> 
+                                  <td>{{ payment.amount }}</td>
+                                  <td>{{ payment.date }}</td>
+                              </tr>
+                            {% endif %}
+                          {% endfor %}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -133,18 +137,26 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="allocModalLabel">Add item to wish list</h4>
           </div>
-                        <form action="/add_wishlist/" method="post"> 
+                        <form action="/jid/number/add_invoice/" method="post"> 
                     {% csrf_token %}    
           <div class="modal-body">
 
                     
               <div class="form-group">
                 <label for="Stage">Name</label>
-                    <input type="text" name="name"  class="form-control">
-                </div>
+                  <select class="form-control" name="name">
+                  {% for stage in stages %}
+                    <option value="{{ stage.id }}">{{ stage.name }}</option>
+                  {% endfor %}
+                  </select>
+                  </div>
                 <div class="form-group">
-                <label for="Stage">Price</label>
-                <input type="text" name="price"  class="form-control">
+                <label for="Stage">Invoice Value</label>
+                <input type="text" name="value"  class="form-control">
+              </div>
+               <div class="form-group">
+                <label for="Stage">Invoice Date</label>
+                <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
               </div>
           </div>
           <div class="modal-footer">
@@ -181,17 +193,31 @@
 </div>
 
 
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+      <script type="text/javascript">
+    $("#addModal").on('show.bs.modal', function(e){
+      var itemContractorPaidDate = new Date();
+      var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
+      var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
+      var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('date"]').val(date);
+    });
+</script>
+      <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="{% static 'js/vendor/holder.min.js' %}"></script>
-	    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
-	<script src="{% static 'js/hilitor.js' %}"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+  <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+  <script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
+  <!--<script src="{% static 'js/hilitor.js' %}"></script>-->
+  <script src="{% static 'js/list.fuzzysearch.min.js' %}"></script>
+  <script src="{% static 'js/list.js' %}"></script>
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+
+
   </body>
 </html>
