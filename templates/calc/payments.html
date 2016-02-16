@@ -60,6 +60,7 @@
         <ul class="nav navbar-nav navbar-right">
           <li><a  href="#addModal"  data-toggle="modal" data-target="#addModal">+ADD INVOICE</a></li>
           <li><a  href="#paymentModal"  data-toggle="modal" data-target="#paymentModal">+ADD PAYMENT</a></li>
+          <li><a  href="#variationModal"  data-toggle="modal" data-target="#variationModal">+ADD VARIATION</a></li>
         </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -96,6 +97,7 @@
                             <th>Invoice date</th>
                             <th>Total paid</th>
                             <th>Paid date</th>
+                            <th></th>
                         </tr>
                      </thead>
                     <tbody> 
@@ -107,6 +109,9 @@
                               <td>{{ invoice.date }}</td> 
                               <td>{{ invoice.total_paid }}</td>
                               <td></td>
+                              <td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-invoice-id="{{ invoice.stage.id }}" data-invoice-value="{{ invoice.value }}" data-invoice-date="{{ invoice.date|date:"Y-m-d"  }}"  data-invoice="{{ invoice.id }}">edit</a><br>
+              <a style="color:red;" href="#delModal" data-toggle="modal" data-target="#delModal" data-invoice-id="{{ invoice.id }}">delete</a>
+            </td>
                           </tr>
                           {% for payment in payments %}
                             {% if payment.invoice == invoice %}
@@ -117,6 +122,37 @@
                                   <td></td> 
                                   <td>{{ payment.amount }}</td>
                                   <td>{{ payment.date }}</td>
+                                  <td><a href="#editPaymentModal" data-toggle="modal" data-target="#editPaymentModal" data-payment-id="{{ payment.id }}" data-payment-amount="{{ payment.amount }}" data-payment-date="{{ payment.date|date:"Y-m-d" }}">edit</a><br>
+              <a style="color:red;" href="#delPaymentModal" data-toggle="modal" data-target="#delPaymentModal" data-payment-id="{{ payment.id }}">delete</a>
+            </td>
+                              </tr>
+                            {% endif %}
+                          {% endfor %}
+                        {% endfor %}
+                        {% for invoice in variations %}
+                          <tr> 
+                              <th scope=row>{{ forloop.counter }}</th> 
+                              <td>{{ invoice.name }}</td> 
+                              <td>{{ invoice.value }}</td> 
+                              <td>{{ invoice.date }}</td> 
+                              <td>{{ invoice.total_paid }}</td>
+                              <td></td>
+                              <td><a href="#editVariationModal" data-toggle="modal" data-target="#editVariationModal"  data-invoice-name="{{ invoice.name }}" data-invoice-value="{{ invoice.value }}" data-invoice-date="{{ invoice.date|date:"Y-m-d"  }}"  data-invoice="{{ invoice.id }}"   >edit</a><br>
+              <a style="color:red;" href="#delModal" data-toggle="modal" data-target="#delModal" data-invoice-id="{{ invoice.id }}">delete</a>
+            </td>
+                          </tr>
+                          {% for payment in payments %}
+                            {% if payment.invoice == invoice %}
+                              <tr> 
+                                  <th scope=row></th> 
+                                  <td></td> 
+                                  <td></td> 
+                                  <td></td> 
+                                  <td>{{ payment.amount }}</td>
+                                  <td>{{ payment.date }}</td>
+                                   <td><a href="#editPaymentModal" data-toggle="modal" data-target="#editPaymentModal" data-payment-id="{{ payment.id }}" data-payment-amount="{{ payment.amount }}" data-payment-date="{{ payment.date|date:"Y-m-d" }}">edit</a><br>
+              <a style="color:red;" href="#delPaymentModal" data-toggle="modal" data-target="#delPaymentModal" data-payment-id="{{ payment.id }}">delete</a>
+            </td>
                               </tr>
                             {% endif %}
                           {% endfor %}
@@ -169,7 +205,36 @@
       </div>
     </div>
 
-        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="allocModalLabel">Edit invoice</h4>
+          </div>
+                        <form action="/job{{ jid }}/{{ number }}/edit_invoice/" method="post"> 
+                    {% csrf_token %}    
+          <div class="modal-body">
+                <div class="form-group">
+                <label for="Stage">Invoice Value</label>
+                <input type="text" name="value"  class="form-control">
+              </div>
+               <div class="form-group">
+                <label for="Stage">Invoice Date</label>
+                <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
+              </div>
+              <input type="hidden" name="id"  class="form-control">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">EDIT</button>
+          </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -207,29 +272,151 @@
       </div>
     </div>
 
-    <!-- Modal -->
-<div class="modal fade" id="delTaskModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Do you want to delete the item?</h4>
+    <div class="modal fade" id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="allocModalLabel">Edit payment</h4>
+          </div>
+                        <form action="/job{{ jid }}/{{ number }}/edit_payment/" method="post"> 
+                    {% csrf_token %}    
+          <div class="modal-body">
+                <div class="form-group">
+                <label for="Stage">Paid Amount</label>
+                <input type="text" name="value"  class="form-control">
+              </div>
+               <div class="form-group">
+                <label for="Stage">Paid Date</label>
+                <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
+              </div>
+              <input type="hidden" name="id"  class="form-control">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">EDIT</button>
+          </div>
+           </form>
+        </div>
       </div>
-                    <form action="/delete_wishlist/" method="post">    
-                {% csrf_token %}    
-      <div class="modal-body">
-                <input type="text" name="item_id" value="">
-                <h3 id="task_desc">IRBIIIK</h3>
-           
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-danger" onclick="document.getElementById('delitem{{ task_item.id }}').submit(); return false;">DELETE</button>
-      </div>
-       </form>
     </div>
-  </div>
-</div>
+
+        <div class="modal fade" id="variationModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="allocModalLabel">Add variation</h4>
+          </div>
+                        <form action="/job{{ jid }}/{{ number }}/add_variation/" method="post"> 
+                    {% csrf_token %}    
+          <div class="modal-body">
+
+                    
+              <div class="form-group">
+                <label for="Stage">Name</label>
+                  <input type="text" name="name"  class="form-control" value="Variation">
+                  </div>
+                <div class="form-group">
+                <label for="Stage">Invoice Value</label>
+                <input type="text" name="value"  class="form-control">
+              </div>
+               <div class="form-group">
+                <label for="Stage">Invoice Date</label>
+                <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">ADD</button>
+          </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+
+        <div class="modal fade" id="editVariationModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="allocModalLabel">Edit variation</h4>
+          </div>
+                        <form action="/job{{ jid }}/{{ number }}/edit_variation/" method="post"> 
+                    {% csrf_token %}    
+          <div class="modal-body">
+
+                    
+              <div class="form-group">
+                <label for="Stage">Name</label>
+                  <input type="text" name="name"  class="form-control" value="Variation">
+                  </div>
+                <div class="form-group">
+                <label for="Stage">Invoice Value</label>
+                <input type="text" name="value"  class="form-control">
+              </div>
+               <div class="form-group">
+                <label for="Stage">Invoice Date</label>
+                <input type="Date" name="date"  class="form-control" id="myDate" value="2010-12-12">
+              </div>
+              <input type="hidden" name="id"  class="form-control">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">EDIT</button>
+          </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Delete invoice</h4>
+          </div>
+          <form action="/job{{ jid }}/{{ number }}/delete_invoice/" method="post">
+            {% csrf_token %}
+                        <div class="modal-body">
+
+                             <input type="hidden" name="id"  class="form-control">
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+     <div class="modal fade" id="delPaymentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Delete payment</h4>
+          </div>
+          <form action="/job{{ jid }}/{{ number }}/delete_payment/" method="post">
+            {% csrf_token %}
+                        <div class="modal-body">
+
+                             <input type="hidden" name="id"  class="form-control">
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+           </form>
+        </div>
+      </div>
+    </div>
+
+
 
 
 
@@ -262,6 +449,58 @@
       var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
       var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
       $(e.currentTarget).find('#myDate').val(date);
+    });
+    $("#variationModal").on('show.bs.modal', function(e){
+      var itemContractorPaidDate = new Date();
+      var day = ("0" + itemContractorPaidDate.getDate()).slice(-2);
+      var month = ("0" + (itemContractorPaidDate.getMonth() + 1)).slice(-2);
+      var date = itemContractorPaidDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('#myDate').val(date);
+    });
+    $("#editModal").on('show.bs.modal', function(e){
+      var invoiceId = $(e.relatedTarget).data('invoice-id');
+      var invoiceValue = $(e.relatedTarget).data('invoice-value');
+      var invoiceDate = new Date($(e.relatedTarget).data('invoice-date'));
+      var id =  $(e.relatedTarget).data('invoice');
+      var day = ("0" + invoiceDate.getDate()).slice(-2);
+      var month = ("0" + (invoiceDate.getMonth() + 1)).slice(-2);
+      var date = invoiceDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('input[name="name"]').val(invoiceId);
+      $(e.currentTarget).find('input[name="value"]').val(invoiceValue);
+      $(e.currentTarget).find('input[name="date"]').val(date);
+      $(e.currentTarget).find('input[name="id"]').val(id);
+    });
+    $("#delModal").on('show.bs.modal', function(e){
+      var invoiceId = $(e.relatedTarget).data('invoice-id');
+      $(e.currentTarget).find('input[name="id"]').val(invoiceId);
+    });
+    $("#editPaymentModal").on('show.bs.modal', function(e){
+      var paymentId = $(e.relatedTarget).data('payment-id');
+      var paymentAmount = $(e.relatedTarget).data('payment-amount');
+      var invoiceDate = new Date($(e.relatedTarget).data('paymentDate'));
+      var day = ("0" + invoiceDate.getDate()).slice(-2);
+      var month = ("0" + (invoiceDate.getMonth() + 1)).slice(-2);
+      var date = invoiceDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('input[name="value"]').val(paymentAmount);
+      $(e.currentTarget).find('input[name="date"]').val(date);
+      $(e.currentTarget).find('input[name="id"]').val(paymentId);
+    });
+    $("#delPaymentModal").on('show.bs.modal', function(e){
+      var invoiceId = $(e.relatedTarget).data('payment-id');
+      $(e.currentTarget).find('input[name="id"]').val(invoiceId);
+    });
+    $("#editVariationModal").on('show.bs.modal', function(e){
+      var invoiceName = $(e.relatedTarget).data('invoice-name');
+      var invoiceValue = $(e.relatedTarget).data('invoice-value');
+      var invoiceDate = new Date($(e.relatedTarget).data('invoice-date'));
+      var id =  $(e.relatedTarget).data('invoice');
+      var day = ("0" + invoiceDate.getDate()).slice(-2);
+      var month = ("0" + (invoiceDate.getMonth() + 1)).slice(-2);
+      var date = invoiceDate.getFullYear()+"-"+(month)+"-"+(day);
+      $(e.currentTarget).find('input[name="name"]').val(invoiceName);
+      $(e.currentTarget).find('input[name="value"]').val(invoiceValue);
+      $(e.currentTarget).find('input[name="date"]').val(date);
+      $(e.currentTarget).find('input[name="id"]').val(id);
     });
 </script>
 

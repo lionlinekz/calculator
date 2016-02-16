@@ -18,14 +18,17 @@ from django.template import Context
 from cgi import escape
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
+from django import template
 
+register = template.Library()
 import csv
 
 
 def payments(request, number=0, jid=0):
 	context_dict = {}
 	context_dict['stages'] = Stage.objects.all()
-	context_dict['invoices'] = Invoice.objects.filter(job=jid, site=number)
+	context_dict['invoices'] = Invoice.objects.filter(job=jid, site=number).exclude(stage__isnull=True)
+	context_dict['variations'] = Invoice.objects.filter(job=jid, site=number, stage = None)
 	context_dict['payments'] = Payment.objects.all()
 	job = Job.objects.get(pk=jid)
 	context_dict['units'] = create_list(job.number)
@@ -58,7 +61,82 @@ def add_payment(request, number=0, jid=0):
 		url = reverse('payments', kwargs={'jid': jid, 'number':number})
 		return HttpResponseRedirect(url)
 
+def add_variation(request, number=0, jid=0):
+	if request.method == "POST":
+		name = request.POST['name']
+		value = request.POST['value']
+		date = request.POST['date']
+		job = Job.objects.get(pk = jid)
+		invoice = Invoice(job = job, site = number, name = name, value = value, date = date)
+		invoice.save()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
 
+def edit_invoice(request, number=0, jid=0):
+	if request.method == "POST":
+		invoice_id = request.POST['id']
+		invoice = Invoice.objects.get(pk = invoice_id)
+		stage_id = request.POST['name']
+		value = request.POST['value']
+		date = request.POST['date']
+		stage = Stage.objects.get(pk = stage_id)
+		job = Job.objects.get(pk = jid)
+		invoice.stage = stage
+		invoice.date = date
+		invoice.value = value
+		invoice.save()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
+
+def delete_invoice(request, number=0, jid=0):
+	if request.method == "POST":
+		invoice_id = request.POST['id']
+		invoice = Invoice.objects.get(pk = invoice_id)
+		invoice.delete()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
+
+def delete_payment(request, number=0, jid=0):
+	if request.method == "POST":
+		payment_id = request.POST['id']
+		payment = Payment.objects.get(pk = payment_id)
+		invoice = payment.invoice
+		invoice.total_paid -= payment.amount
+		invoice.save()
+		payment.delete()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
+
+def edit_payment(request, number=0, jid=0):
+	if request.method == "POST":
+		payment_id = request.POST['id']
+		payment = Payment.objects.get(pk = payment_id)
+		value = request.POST['value']
+		date = request.POST['date']
+		payment.date = date
+		invoice_id = payment.invoice.id
+		invoice = Invoice.objects.get(pk = invoice_id)
+		invoice.total_paid -= float(payment.amount)
+		invoice.total_paid += float(value)
+		invoice.save()
+		payment.amount = value
+		payment.save()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
+
+def edit_variation(request, number=0, jid=0):
+	if request.method == "POST":
+		invoice_id = request.POST['id']
+		invoice = Invoice.objects.get(pk = invoice_id)
+		name = request.POST['name']
+		value = request.POST['value']
+		date = request.POST['date']
+		invoice.name = name
+		invoice.date = date
+		invoice.value = value
+		invoice.save()
+		url = reverse('payments', kwargs={'jid': jid, 'number':number})
+		return HttpResponseRedirect(url)
 
 def jobs(request):
 	context_dict = {}
@@ -682,4 +760,7 @@ def pdfView(request, number = 0, jid=0):
             context_dict,
         )
 
+@register.filter
+def subtract(value, arg):
+    return value - arg
 
