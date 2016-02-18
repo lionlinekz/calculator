@@ -19,6 +19,7 @@ from cgi import escape
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from django import template
+import xlwt
 
 register = template.Library()
 import csv
@@ -765,7 +766,48 @@ def pdfView(request, number = 0, jid=0):
             context_dict,
         )
 
-@register.filter
-def subtract(value, arg):
-    return value - arg
+def export_to_xls(request, number = 0, jid=0):
+	tasks = Task.objects.filter(site=number, job=jid)
+	task_items = TaskItem.objects.filter(task__site=number)
+
+	# Create the HttpResponse object with Excel header.This tells browsers that 
+	# the document is a Excel file.
+	response = HttpResponse(content_type='application/ms-excel')
+
+	# The response also has additional Content-Disposition header, which contains 
+	# the name of the Excel file.
+	response['Content-Disposition'] = 'attachment; filename=books.xls'
+
+	# Create object for the Workbook which is under xlwt library.
+	workbook = xlwt.Workbook()
+
+	# By using Workbook object, add the sheet with the name of your choice.
+	worksheet = workbook.add_sheet("Ideas")
+
+	row_num = 0
+	columns = ['Stage', 'Number', 'Description', 'Costs Estimated', 'Costs Quoted', 'Highest Quote', 'Expense Incurred', 'Invoice Number', 'Trade Contractor', 'Contractor Paid', 'Paid Date', 'Task Complete', 'Under Estimate', 'Under Quote', 'Expense Future Calculator', 'Expense Future', 'Infront Cost Estimated', 'Charged', 'Payment Received', 'Payment Date']
+	for col_num in range(len(columns)):
+	    # For each cell in your Excel Sheet, call write function by passing row number, 
+	    # column number and cell data.
+	    worksheet.write(row_num, col_num, columns[col_num])     
+
+	for task in tasks:
+	    row_num += 1
+	    row = [task.stage,task.item_no,task.task_name,task.costs_estimated, task.costs_quoted, task.highest_quote, task.expense_incurred,'', '', '', '', task.task_complete, task.under_quote_by, task.under_quote_by2, task.expense_future_calculator, task.expense_future, task.infront_cost, task.client_charged, task.payment_received, str(task.payment_date)]
+	    for col_num in range(len(row)):
+	        worksheet.write(row_num, col_num, row[col_num])
+	    for task_item in task_items:
+	    	if task_item.task == task:
+	    		row_num += 1
+	    		cp = task_item.contractor_paid
+	    		if cp == 0:
+	    			cp = ''
+	    			cpd = ''
+	    		else:
+	    			cpd = str(task_item.contractor_paid_date)
+	    		row = ['', '', task_item.item_name, '', '', '', task_item.expense_incurred, task_item.invoice_no, task_item.trade_contractor, cp, cpd, '', '', '', '', '', '', '', '', '', '']
+	    		for col_num in range(len(row)):
+	        		worksheet.write(row_num, col_num, row[col_num])
+	workbook.save(response)
+	return response
 
