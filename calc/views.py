@@ -358,6 +358,9 @@ def index(request, number=0, jid=0):
 
 @login_required(login_url='/login/')
 def estimate(request, number=0, jid=0):
+	test_tasks = Task.objects.all()
+	for test in test_tasks:
+		update_task(test.id)
 	context_dict = summary_header(number, jid)
 	job = Job.objects.get(pk=jid)
 	context_dict['jid'] = jid
@@ -588,7 +591,9 @@ def delete_item(request, number=0, jid=0):
 		try:
 			task_item_id = request.POST['task_item_id']
 			taskItem = TaskItem.objects.get(id = task_item_id)
+			task_id = taskItem.task.id
 			taskItem.delete()
+			update_task(task_id)
 		except Exception as e:
 			print e
 	return index(request, number, jid)
