@@ -39,53 +39,65 @@ def payments(request, number=0, jid=0):
 
 def add_invoice(request, number=0, jid=0):
 	if request.method == "POST":
-		stage_id = request.POST['name']
-		value = request.POST['value']
-		date = request.POST['date']
-		stage = Stage.objects.get(pk = stage_id)
-		job = Job.objects.get(pk = jid)
-		invoice = Invoice(job = job, site = number, stage = stage, name = stage.name, value = value, date = date)
-		invoice.save()
+		try:
+			stage_id = request.POST['name']
+			value = request.POST['value']
+			date = request.POST['date']
+			stage = Stage.objects.get(pk = stage_id)
+			job = Job.objects.get(pk = jid)
+			invoice = Invoice(job = job, site = number, stage = stage, name = stage.name, value = value, date = date)
+			invoice.save()
+		except Exception as e:
+			print e
 		url = reverse('payments', kwargs={'jid': jid, 'number':number})
 		return HttpResponseRedirect(url)
 
 def add_payment(request, number=0, jid=0):
 	if request.method == "POST":
-		invoice_id = request.POST['name']
-		value = request.POST['value']
-		date = request.POST['date']
-		invoice = Invoice.objects.get(pk = invoice_id)
-		payment = Payment(invoice = invoice, amount = value, date = date)
-		payment.save()
-		invoice.total_paid += float(value)
-		invoice.save()
+		try:
+			invoice_id = request.POST['name']
+			value = request.POST['value']
+			date = request.POST['date']
+			invoice = Invoice.objects.get(pk = invoice_id)
+			payment = Payment(invoice = invoice, amount = value, date = date)
+			payment.save()
+			invoice.total_paid += float(value)
+			invoice.save()
+		except Exception as e:
+			print e
 		url = reverse('payments', kwargs={'jid': jid, 'number':number})
 		return HttpResponseRedirect(url)
 
 def add_variation(request, number=0, jid=0):
 	if request.method == "POST":
-		name = request.POST['name']
-		value = request.POST['value']
-		date = request.POST['date']
-		job = Job.objects.get(pk = jid)
-		invoice = Invoice(job = job, site = number, name = name, value = value, date = date)
-		invoice.save()
+		try:
+			name = request.POST['name']
+			value = request.POST['value']
+			date = request.POST['date']
+			job = Job.objects.get(pk = jid)
+			invoice = Invoice(job = job, site = number, name = name, value = value, date = date)
+			invoice.save()
+		except Exception as e:
+			print e
 		url = reverse('payments', kwargs={'jid': jid, 'number':number})
 		return HttpResponseRedirect(url)
 
 def edit_invoice(request, number=0, jid=0):
 	if request.method == "POST":
-		invoice_id = request.POST['id']
-		invoice = Invoice.objects.get(pk = invoice_id)
-		stage_id = request.POST['name']
-		value = request.POST['value']
-		date = request.POST['date']
-		stage = Stage.objects.get(pk = stage_id)
-		job = Job.objects.get(pk = jid)
-		invoice.stage = stage
-		invoice.date = date
-		invoice.value = value
-		invoice.save()
+		try:
+			invoice_id = request.POST['id']
+			invoice = Invoice.objects.get(pk = invoice_id)
+			stage_id = request.POST['name']
+			value = request.POST['value']
+			date = request.POST['date']
+			stage = Stage.objects.get(pk = stage_id)
+			job = Job.objects.get(pk = jid)
+			invoice.stage = stage
+			invoice.date = date
+			invoice.value = value
+			invoice.save()
+		except Exception as e:
+			print e
 		url = reverse('payments', kwargs={'jid': jid, 'number':number})
 		return HttpResponseRedirect(url)
 
