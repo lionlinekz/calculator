@@ -39,18 +39,22 @@ def payments(request, number=0, jid=0):
 
 def add_invoice(request, number=0, jid=0):
 	if request.method == "POST":
-		stage_id = request.POST['name']
+            try:
+                stage_id = request.POST['name']
 		value = request.POST['value']
 		date = request.POST['date']
 		stage = Stage.objects.get(pk = stage_id)
 		job = Job.objects.get(pk = jid)
 		invoice = Invoice(job = job, site = number, stage = stage, name = stage.name, value = value, date = date)
 		invoice.save()
-		url = reverse('payments', kwargs={'jid': jid, 'number':number})
-		return HttpResponseRedirect(url)
+            except Exception as e:
+                print e
+	    url = reverse('payments', kwargs={'jid': jid, 'number':number})
+            return HttpResponseRedirect(url)
 
 def add_payment(request, number=0, jid=0):
 	if request.method == "POST":
+            try:
 		invoice_id = request.POST['name']
 		value = request.POST['value']
 		date = request.POST['date']
@@ -59,19 +63,24 @@ def add_payment(request, number=0, jid=0):
 		payment.save()
 		invoice.total_paid += float(value)
 		invoice.save()
-		url = reverse('payments', kwargs={'jid': jid, 'number':number})
-		return HttpResponseRedirect(url)
+            except Exception as e:
+                print e
+	    url = reverse('payments', kwargs={'jid': jid, 'number':number})
+	    return HttpResponseRedirect(url)
 
 def add_variation(request, number=0, jid=0):
 	if request.method == "POST":
+            try:
 		name = request.POST['name']
 		value = request.POST['value']
 		date = request.POST['date']
 		job = Job.objects.get(pk = jid)
 		invoice = Invoice(job = job, site = number, name = name, value = value, date = date)
 		invoice.save()
-		url = reverse('payments', kwargs={'jid': jid, 'number':number})
-		return HttpResponseRedirect(url)
+            except Exception as e:
+                print e
+	    url = reverse('payments', kwargs={'jid': jid, 'number':number})
+	    return HttpResponseRedirect(url)
 
 def edit_invoice(request, number=0, jid=0):
 	if request.method == "POST":
