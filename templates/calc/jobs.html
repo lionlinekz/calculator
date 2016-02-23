@@ -18,148 +18,175 @@
 	<link href="{% static 'dashboard.css' %}" rel="stylesheet">
 </head>
 <body>
-  	<nav class="navbar navbar-inverse navbar-fixed-top">
-  		<div class="container-fluid">
-  			<div class="navbar-header">
-  				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-  					<span class="sr-only">Toggle navigation</span>
-  					<span class="icon-bar"></span>
-  					<span class="icon-bar"></span>
-  					<span class="icon-bar"></span>
-  				</button>
-  			</div>
-  			<div id="navbar" class="navbar-collapse collapse">
-  				<ul class="nav navbar-nav navbar-right">
-  					<li><a href="/logout/">Log out</a></li>
-  				</ul>
-  			</div>
-  		</div>
-  	</nav>
-  	<div class="container">
-  		<br><br><br>
-  		<button class="btn btn-primary" data-toggle="modal" data-target="#addModal">+ Add new job</button><br><br>
-  		<div class="list-group">
-  			{% for job in jobs %}
-          <li class="list-group-item list-group-item-info"> <a href = "#"  data-toggle="modal" data-target="#editModal" data-name="{{ job.name }}" data-cost="{{ job.cost }}" data-number="{{ job.number }}" data-id="{{ job.id }}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> </a> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></li>
-         
-	  			<a href="/job{{ job.id }}/j" class="list-group-item">
-	  				<h4 class="list-group-item-heading">{{ job.name }}, ${{ job.cost }}, {{ job.number }} units  </h4> 
-	  				<p class="list-group-item-text">{{ job.address }}</p>
-	  			</a>
-	  		{% endfor %}
-        <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
-  		</div>
-  	</div>
+ <nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+   <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+     <span class="sr-only">Toggle navigation</span>
+     <span class="icon-bar"></span>
+     <span class="icon-bar"></span>
+     <span class="icon-bar"></span>
+   </button>
+ </div>
+ <div id="navbar" class="navbar-collapse collapse">
+  <ul class="nav navbar-nav navbar-right">
+   <li><a href="/logout/">Log out</a></li>
+ </ul>
+</div>
+</div>
+</nav>
+<div class="container">
+  <br><br><br>
+  <button class="btn btn-primary" data-toggle="modal" data-target="#addModal">+ Add new job</button><br><br>
+  <div class="list-group">
+   {% for job in jobs %}
+   <li class="list-group-item list-group-item-info">
+    <a href="#" class="pull-right"  data-toggle="modal" data-target="#deleteModal"  data-id="{{ job.id }}"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a><span class="pull-right" aria-hidden="true">  .  </span>   <a href = "#" class="pull-right" data-toggle="modal" data-target="#editModal" data-name="{{ job.name }}" data-cost="{{ job.cost }}" data-address="{{ job.address }}" data-id="{{ job.id }}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> </a><span class="glyphicon glyphicon-kj" aria-hidden="true"></li>
+
+    <a href="/job{{ job.id }}/j" class="list-group-item">
+     <h4 class="list-group-item-heading">{{ job.name }}, ${{ job.cost }}, {{ job.number }} units  </h4> 
+     <p class="list-group-item-text">{{ job.address }}</p>
+   </a>
+   {% endfor %}
+   <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
+ </div>
+</div>
 
 
-    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Add job</h4>
-          </div>
-          <form action="/add_job/" method="post">
-            {% csrf_token %}
-              <div class="modal-body">
-              <div class="form-group">
-                <label>Clients name</label>
-                <input type="text" class="form-control" name="name">
-              </div> 
-              <div class="form-group">
-                <label>Address</label>
-                <textarea class="form-control" name="address" rows="3"></textarea>
-              </div> 
-              <div class="form-group">
-                <label>Number of units</label>
-                <select class="form-control" name="number">
-				  <option>1</option>
-				  <option>2</option>
-				  <option>3</option>
-				  <option>4</option>
-				  <option>5</option>
-				</select>
-              </div> 
-              <div class="form-group">
-                <label for="Stage">Template</label>
-                  <select class="form-control">
-                    <option>Unit Template</option>
-                  </select>
-                  </div>
-              <div class="form-group">
-                <label>Contract Price</label>
-                <div class="input-group">
-                <span class="input-group-addon">$</span>
-                <input type="text" class="form-control" name="cost">
-                </div>
-              </div>     
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Add</button>
-            </div>
-           </form>
-        </div>
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add job</h4>
       </div>
-    </div>
-
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Edit job</h4>
+      <form action="/add_job/" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Clients name</label>
+            <input type="text" class="form-control" name="name">
+          </div> 
+          <div class="form-group">
+            <label>Address</label>
+            <textarea class="form-control" name="address" rows="3"></textarea>
+          </div> 
+          <div class="form-group">
+            <label>Number of units</label>
+            <select class="form-control" name="number">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div> 
+          <div class="form-group">
+            <label for="Stage">Template</label>
+            <select class="form-control">
+              <option>Unit Template</option>
+            </select>
           </div>
-          <form action="/edit_job/" method="post">
-            {% csrf_token %}
-              <div class="modal-body">
-              <div class="form-group">
-                <label>Clients name</label>
-                <input type="text" class="form-control" name="name">
-              </div> 
-              <div class="form-group">
-                <label>Address</label>
-                <textarea class="form-control" name="address" rows="3"></textarea>
-              </div> 
-              <div class="form-group">
-                <label>Contract Price</label>
-                <div class="input-group">
-                <span class="input-group-addon">$</span>
-                <input type="text" class="form-control" name="cost">
-                </div>
-              </div>     
+          <div class="form-group">
+            <label>Contract Price</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input type="text" class="form-control" name="cost">
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-           </form>
+          </div>     
         </div>
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit job</h4>
+      </div>
+      <form action="/edit_job/" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Clients name</label>
+            <input type="text" class="form-control" name="name" id="name">
+          </div> 
+          <div class="form-group">
+            <label>Address</label>
+            <textarea class="form-control" name="address" rows="3" id="address"></textarea>
+          </div> 
+          <div class="form-group">
+            <label>Contract Price</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input type="text" class="form-control" name="cost" id="cost">
+            </div>
+          </div>     
+          <input type="hidden" class="form-control" name="id" id="id">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Delete job</h4>
+      </div>
+      <form action="/delete_job/" method="post">
+        {% csrf_token %}    
+          <input type="hidden" class="form-control" name="id" id="id">
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript">
-          $("#editModal").on('show.bs.modal', function(e){
-            var name = $(e.relatedTarget).data('name');
-            var cost = $(e.relatedTarget).data('cost');
-            var address = $(e.relatedTarget).data('address');
-            var id = $(e.relatedTarget).data('id');
-            $(e.currentTarget).find("#name").val(name);
-            $(e.currentTarget).find("#cost").val(cost);
-            $(e.currentTarget).find("#address").val(address);
-            $(e.currentTarget).find("#id").val(id);
-          });
-    </script>
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="{% static 'js/vendor/holder.min.js' %}"></script>
-    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
-    <script src="{% static 'js/hilitor.js' %}"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+<script src="{% static 'js/vendor/holder.min.js' %}"></script>
+<script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
+<script src="{% static 'js/hilitor.js' %}"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+<script type="text/javascript">
+  $("#editModal").on('show.bs.modal', function(e){
+    var name = $(e.relatedTarget).data('name');
+    var cost = $(e.relatedTarget).data('cost');
+    var address = $(e.relatedTarget).data('address');
+    var id = $(e.relatedTarget).data('id');
+    $(e.currentTarget).find("#name").val(name);
+    $(e.currentTarget).find("#cost").val(cost);
+    $(e.currentTarget).find("#address").val(address);
+    $(e.currentTarget).find("#id").val(id);
+  });
+  $("#deleteModal").on('show.bs.modal', function(e){
+    var id = $(e.relatedTarget).data('id');
+    $(e.currentTarget).find("#id").val(id);
+  });
+</script>
 
 </body>
 </html>

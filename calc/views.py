@@ -168,7 +168,7 @@ def add_job(request):
 			job.address = request.POST['address']
 			job.number = request.POST['number']
 			job.save()
-			csv_filepathname="/home/lionline/calculator/calc/data-aset.csv"
+			csv_filepathname="/Users/assetsarsengaliyev/calculator/calc/data-aset.csv"
 			for i in range(0, int(job.number)):
 				dataReader = csv.reader(open(csv_filepathname), delimiter=';', quotechar='"')
 				for row in dataReader:
@@ -179,6 +179,29 @@ def add_job(request):
 					task.item_no = row[1]
 					task.task_name = row[2]
 					task.save()
+		except Exception as e:
+			print e
+		return HttpResponseRedirect('/jobs/')
+
+def edit_job(request):
+	if request.method == "POST":
+		try:
+			index = request.POST['id']
+			job = Job.objects.get(pk = index)
+			job.name = request.POST['name']
+			job.cost = request.POST['cost']
+			job.address = request.POST['address']
+			job.save()
+		except Exception as e:
+			print e
+		return HttpResponseRedirect('/jobs/')
+
+def delete_job(request):
+	if request.method == "POST":
+		try:
+			index = request.POST['id']
+			job = Job.objects.get(pk = index)
+			job.delete()
 		except Exception as e:
 			print e
 		return HttpResponseRedirect('/jobs/')
