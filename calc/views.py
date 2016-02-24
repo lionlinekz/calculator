@@ -441,23 +441,23 @@ def default(request, default, jid=0):
 			client_charged = tasks.aggregate(Sum('client_charged'))
 			payment_received = tasks.aggregate(Sum('payment_received'))
 			allocations = tasks.aggregate(Sum('allocation'))
-			context_dict['costs_estimated'] = costs_estimated['costs_estimated__sum']
-			context_dict['costs_quoted'] = costs_quoted['costs_quoted__sum']
-			context_dict['expense_incurred'] = expense_incurred['expense_incurred__sum']
-			context_dict['expense_future'] = expense_future['expense_future__sum']
-			context_dict['client_charged'] = client_charged['client_charged__sum']
-			context_dict['payment_received'] = payment_received['payment_received__sum']
-			context_dict['allocations'] = allocations['allocation__sum']
+			context_dict['costs_estimated'] = int(costs_estimated['costs_estimated__sum'])
+			context_dict['costs_quoted'] = int(costs_quoted['costs_quoted__sum'])
+			context_dict['expense_incurred'] = int(expense_incurred['expense_incurred__sum'])
+			context_dict['expense_future'] = int(expense_future['expense_future__sum'])
+			context_dict['client_charged'] = int(client_charged['client_charged__sum'])
+			context_dict['payment_received'] = int(payment_received['payment_received__sum'])
+			context_dict['allocations'] = int(allocations['allocation__sum'])
 			cost = 0
 			for task in tasks:
 				if task.costs_quoted == 0:
 					cost = cost + task.costs_estimated
 				else:
 					cost = cost + task.costs_quoted
-			context_dict['cost_difference_actual'] = cost - context_dict['expense_incurred']
-			context_dict['profit_actual'] = int(job.cost) - expense_incurred['expense_incurred__sum']
-			context_dict['profit_potential'] = int(job.cost) - costs_quoted['costs_quoted__sum']
-			context_dict['profit_estimate'] = int(job.cost) - costs_estimated['costs_estimated__sum']
+			context_dict['cost_difference_actual'] = int(cost - context_dict['expense_incurred'])
+			context_dict['profit_actual'] = int(int(job.cost) - expense_incurred['expense_incurred__sum'])
+			context_dict['profit_potential'] = int(int(job.cost) - costs_quoted['costs_quoted__sum'])
+			context_dict['profit_estimate'] = int(int(job.cost) - costs_estimated['costs_estimated__sum'])
 		except Exception as e:
 			print e
 		context_dict['jid'] = jid
