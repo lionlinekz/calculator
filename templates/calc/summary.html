@@ -55,15 +55,15 @@
 			<div class="col-lg-6">
 				<ul class="list-group">
 					<li class="list-group-item">
-						<span class="pull-right"><strong><h5>{{ contract_price|intword }}</h5></strong></span>
+						<span class="pull-right"><strong><h5>${{ contract_price|intword }}</h5></strong></span>
 						<strong><h5>CONTRACT PRICE</h5></strong>
 					</li>
 					<li class="list-group-item">
-						<span class="pull-right"><strong><h5>{{ costs_estimated|intcomma }}</h5></strong></span>
+						<span class="pull-right"><strong><h5>${{ costs_estimated|intcomma }}</h5></strong></span>
 						<strong><h5>COSTS ESTIMATE</h5></strong>
 					</li>
 					<li class="list-group-item">
-						<span class="pull-right"><strong><h5>{{ costs_quoted|intcomma }}</h5></strong></span>
+						<span class="pull-right"><strong><h5>${{ costs_quoted|intcomma }}</h5></strong></span>
 						<strong><h5>COSTS QUOTE</h5></strong>
 					</li>
 					<li class="list-group-item">
@@ -71,68 +71,66 @@
 						<strong><h5>COSTS DIFFERENCE QUOTE</h5></strong>
 					</li>
 					<li class="list-group-item">
-						<span class="pull-right"><strong><h5>{{ cost_difference_actual|intcomma }}</h5></strong></span>
+						<span class="pull-right"><strong><h5>${{ cost_difference_actual|intcomma }}</h5></strong></span>
 						<strong><h5>COSTS DIFFERENCE ACTUAL</h5></strong>
 					</li>
 					<li class="list-group-item">
-						<span class="pull-right"><strong><h5>{{ expense_incurred|intcomma }}</h5></strong></span>
+						<span class="pull-right"><strong><h5>${{ expense_incurred|intcomma }}</h5></strong></span>
 						<strong><h5>EXPENSE INCURRED</h5></strong>
 					</li>
 					<li class="list-group-item">
-						<span class="pull-right"><strong><h5>{{ expense_future|intcomma }}</h5></strong></span>
+						<span class="pull-right"><strong><h5>${{ expense_future|intcomma }}</h5></strong></span>
 						<strong><h5>EXPENSE FUTURE</h5></strong>
 					</li>			  
+				</ul>
+			</div>
+			<div class="col-lg-6">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5>${{ client_charged|intcomma }}</h5></strong></span>
+						<strong><h5>CLIENT CHARGED</h5></strong>
 					</li>
-					</ul>
-					</div>
-					<div class="col-lg-6">
-						<ul class="list-group">
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5>{{ client_charged|intcomma }}</h5></strong></span>
-								<strong><h5>CLIENT CHARGED</h5></strong>
-							</li>
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5>{{ payment_received|intcomma }}</h5></strong></span>
-								<strong><h5>PAYMENT RECEIVED</h5></strong>
-							</li>
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5>{{ payment_balance|intcomma }}</h5></strong></span>
-								<strong><h5>PAYMENT BALANCE</h5></strong>
-							</li>
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5></h5></strong></span>
-								<strong><h5>BALANCE TO BE INVOICED</h5></strong>
-							</li>
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5>{{ profit_actual|intcomma }}</h5></strong></span>
-								<strong><h5>PROFIT ACTUAL</h5></strong>
-							</li>
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5>{{ profit_potential|intcomma }}</h5></strong></span>
-								<strong><h5>PROFIT POTENTIAL</h5></strong>
-							</li>
-							<li class="list-group-item">
-								<span class="pull-right"><strong><h5>{{ profit_estimate|intcomma }}</h5></strong></span>
-								<strong><h5>PROFIT ESTIMATE</h5></strong>
-							</li>
-						</ul>
-					</div>
-				</div>
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5>${{ payment_received|intcomma }}</h5></strong></span>
+						<strong><h5>PAYMENT RECEIVED</h5></strong>
+					</li>
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5>{{ payment_balance|intcomma }}</h5></strong></span>
+						<strong><h5>PAYMENT BALANCE</h5></strong>
+					</li>
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5></h5></strong></span>
+						<strong><h5>BALANCE TO BE INVOICED</h5></strong>
+					</li>
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5>${{ profit_actual|intcomma }}</h5></strong></span>
+						<strong><h5>PROFIT ACTUAL</h5></strong>
+					</li>
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5>${{ profit_potential|intcomma }}</h5></strong></span>
+						<strong><h5>PROFIT POTENTIAL</h5></strong>
+					</li>
+					<li class="list-group-item">
+						<span class="pull-right"><strong><h5>${{ profit_estimate|intcomma }}</h5></strong></span>
+						<strong><h5>PROFIT ESTIMATE</h5></strong>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-lg-5  col-lg-offset-3">
 
-											<div class="col-lg-5  col-lg-offset-3">
-
-												<form  action="/job{{ jid }}/default/" method="post" class="form-inline">
-													{% csrf_token %}
-													<div class="modal-body">
-														<div class="form-group">
-															<label for="Stage">Contract Price</label>
-															<input type="text" class="form-control" name="contract_price" value="">
-														</div>
-														<button type="submit" class="btn btn-primary">Save</button>
-													</form>
-												</div>
-											</div>
-										</div>
+			<form  action="/job{{ jid }}/default/" method="post" class="form-inline">
+				{% csrf_token %}
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="Stage">Contract Price</label>
+						<input type="text" class="form-control" name="contract_price" value="">
+					</div>
+					<button type="submit" class="btn btn-primary">Save</button>
+				</form>
+			</div>
+		</div>
+	</div>
 										<!-- Button trigger modal -->
 
 
