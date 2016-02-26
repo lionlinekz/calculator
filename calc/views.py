@@ -360,7 +360,7 @@ def create_list(number):
 
 
 @login_required(login_url='/login/')
-def index(request, number=0, jid=0):
+def index(request, number=0, jid=0, anchor=0):
 	job = Job.objects.get(pk=jid)
 	context_dict = summary_header(number, jid)
 	tasks = Task.objects.filter(site=number, job=jid)
@@ -370,6 +370,7 @@ def index(request, number=0, jid=0):
 	context_dict['number'] = number
 	context_dict['jid'] = jid
 	context_dict['units'] = create_list(job.number)
+	context_dict['anchor'] = anchor
 	if request.user.is_authenticated():
 		context_dict['user'] = request.user
 		is_admin = request.user.groups.filter(name='Full Access').exists()
@@ -468,6 +469,7 @@ def default(request, default, jid=0):
 @login_required(login_url='/login/')
 def add_task(request, number=0, jid=0):
 	context_dict = summary_header(number, jid)
+	anchor = 0
 	if request.method =='POST':
 		try:
 			stage = request.POST['stage']
@@ -481,13 +483,15 @@ def add_task(request, number=0, jid=0):
 			payment_date = request.POST['payment_date']
 			task = Task(site=number, stage=stage, item_no=task_number, task_name=task_name, costs_estimated=costs_estimated, costs_quoted=cost_quoted, highest_quote=highest_quote, client_charged=client_charged, payment_received=payment_received, payment_date=payment_date, under_quote_by=cost_quoted, under_quote_by2=cost_quoted, expense_future_calculator=cost_quoted, expense_future=cost_quoted, infront_cost=0)
 			task.save()
+			anchor = "task"+str(task.id)
 		except Exception as e:
 			print e
-	return index(request, number, jid)
+	return index(request, number, jid, anchor)
 
 @login_required(login_url='/login/')
 def add_item(request, number=0, jid=0):
 	context_dict = summary_header(number, jid)
+	anchor = 0
 	if request.method =='POST':
 		try:
 			task_id = int(request.POST['task'])
@@ -504,11 +508,12 @@ def add_item(request, number=0, jid=0):
 			if task.task_complete:
 				item.extra = True
 				item.item_name = item_name + " EXTRA"
-			item.save()	
+			item.save()
+			anchor = "item"+str(item.id)	
 		except Exception as e:
 			print e
 		update_task(task_id)
-	return index(request, number, jid)
+	return index(request, number, jid, anchor)
 
 def update_task(task_id, jid=0):
 	task=Task.objects.get(id = task_id)
@@ -551,6 +556,7 @@ def delete_task(request, number=0, jid=0):
 @login_required(login_url='/login/')
 def pay_invoice(request, number=0, jid=0):
 	context_dict = summary_header(number, jid)
+	anchor = 0
 	if request.method =='POST':
 		task_item_id = int(request.POST['item_id'])
 		contractor_paid = request.POST['contractor_paid']
@@ -559,11 +565,13 @@ def pay_invoice(request, number=0, jid=0):
 		task_item.contractor_paid = contractor_paid
 		task_item.contractor_paid_date = contractor_paid_date
 		task_item.save()
-	return index(request, number, jid)
+		anchor = "item"+str(task_item.id)
+	return index(request, number, jid, anchor)
 
 @login_required(login_url='/login/')
 def input_quote(request, number=0, jid=0):
 	context_dict = summary_header(number, jid)
+	anchor = 0
 	if request.method =='POST':
 		task_id = int(request.POST['task_id'])
 		costs_quoted = request.POST['costs_quoted']
@@ -572,7 +580,8 @@ def input_quote(request, number=0, jid=0):
 		task.costs_quoted = costs_quoted
 		task.highest_quote = highest_quote
 		task.save()
-	return index(request, number, jid)
+		anchor = "task"+str(task.id)
+	return index(request, number, jid, anchor)
 
 
 @login_required(login_url='/login/')
@@ -636,6 +645,7 @@ def delete_item(request, number=0, jid=0):
 
 @login_required(login_url='/login/')
 def edit_task(request, number=0, jid=0):
+	anchor = 0
 	if request.method =='POST':
 		try:
 			task_id = request.POST['task_id']
@@ -665,12 +675,14 @@ def edit_task(request, number=0, jid=0):
 				task.task_complete = True;
 			task.save()
 			update_task(task_id)
+			anchor = "task"+str(task.id)
 		except Exception as e:
 			print e
-	return index(request, number, jid)
+	return index(request, number, jid, anchor)
 
 @login_required(login_url='/login/')
 def edit_item(request, number=0, jid=0):
+	anchor = 0
 	if request.method =='POST':
 		try:
 			item_id = int(request.POST['item_id'])
@@ -684,18 +696,19 @@ def edit_item(request, number=0, jid=0):
 			allocation = request.POST['item_allocation']
 			item = TaskItem.objects.get(id = item_id)
 			item.item_number = item_number
-			item.item_name = item_name	
+			item.item_name = item_name
 			item.expense_incurred = expense_incurred
-			item.invoice_number = invoice_number
+			item.invoice_no = invoice_number
 			item.trade_contractor = trade_contractor
 			item.contractor_paid = contractor_paid
 			item.contractor_paid_date = contractor_paid_date
 			item.allocation = allocation
 			item.save()
 			update_task(item.task.id)
+			anchor = "item"+str(item.id)
 		except Exception as e:
 			print e
-	return index(request, number, jid)
+	return index(request, number, jid, anchor)
 
 def user_login(request):
     # Like before, obtain the context for the user's request.

@@ -63,7 +63,7 @@
 		              </ul>
 		            </li>
 		            <li class="dropdown">
-		              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="export">EXPORT <span class="caret"></span></a>
+		              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="export">EXPORT {{ anchor }}<span class="caret"></span></a>
 		              <ul class="dropdown-menu" aria-labelledby="themes">
 						<li><a  href="/job{{ jid }}/{{ number }}/pdfView/"> EXPORT TO PDF</a></li>
 						<li><a  href="/job{{ jid }}/{{ number }}/export_to_xls/"> EXPORT TO XLS</a></li>
@@ -153,8 +153,8 @@
 							</tr>
 							{% for task in tasks %}
 							{% if task.task_complete %}
-							<tr class="success">
-								{% if is_admin  %}<td><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a><br>
+							<tr class="success" id="task{{task.id}}">
+								{% if is_admin  %}<td><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date|date:"Y-m-d" }}"   >edit</a><br>
 								<form id="viewform{{ task.id }}" action="/job{{ jid }}/{{ number }}/view_items/" method="post">	
 									{% csrf_token %}		
 									<input type="hidden" name="task_id" value="{{ task.id }}">
@@ -187,8 +187,8 @@
 
 						</tr>
 						{% else %}
-						<tr>
-							{% if is_admin  %}<td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date}}"   >edit</a><br>
+						<tr id="task{{task.id}}">
+							{% if is_admin  %}<td class="info"><a href="#editTaskModal" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ task.id }}" data-task-stage="{{ task.stage }}" data-task-number="{{ task.item_no }}"  data-task-name="{{ task.task_name }}"  data-task-cost-quoted="{{ task.costs_quoted }}"   data-task-highest-quote="{{ task.highest_quote }}"    data-task-costs-estimated="{{ task.costs_estimated }}"    data-task-client-charged="{{ task.client_charged }}"    data-task-payment-received="{{ task.payment_received }}"   data-task-payment-date="{{ task.payment_date|date:"Y-m-d" }}"   >edit</a><br>
 							<a style="color:red;" href="#delTaskModal" data-toggle="modal" data-target="#delTaskModal" data-task-id="{{ task.id }}" data-task-desc="{{ task.task_name }}">delete</a>
 						</td>
 						{% endif %}
@@ -220,7 +220,7 @@
 					{% if is_admin or is_input or is_view_all  %}
 					{% for task_item in task_items %}
 					{% if task_item.task ==  task %}
-					<tr>
+					<tr id="item{{task_item.id}}">
 
 						{% if is_admin  %}<td><a href="#editModal" data-toggle="modal" data-target="#editModal" data-item-id="{{ task_item.id }}" data-item-no="{{ task_item.item_no }}" data-item-name="{{ task_item.item_name }}"  data-item-expense-incurred="{{ task_item.expense_incurred }}" data-item-invoice-no="{{ task_item.invoice_no }}" data-item-trade-contractor="{{ task_item.trade_contractor }}" data-item-contractor-paid="{{ task_item.contractor_paid }}" data-item-contractor-paid-date="{{ task_item.contractor_paid_date|date:"Y-m-d" }}" data-item-allocation="{{ task_item.allocation }}" data-item-task-name="{{ task.task_name }}" data-item-task-id="{{ task.id }}"> edit</a><br>
 
@@ -320,11 +320,11 @@
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">Do you want to delete the task?</h4>
 			</div>
-			<form action="/job{{ jid }}/{{ number }}/delete_item/" method="post">	
+			<form action="/job{{ jid }}/{{ number }}/delete_task/" method="post">	
 				{% csrf_token %}	
 				<div class="modal-body">
 					<h3 id="task_desc">DELETE</h3>
-					<input type="hidden" name="task_item_id" value="{{ task_item.id }}">
+					<input type="hidden" name="task_id" value="{{ task_item.id }}">
 
 				</div>
 				<div class="modal-footer">
@@ -752,6 +752,13 @@
      
 		}, false);
 	</script>
+	{% if anchor != "0" %}
+		<script type='text/javascript'>
+			$(document).ready(function(){
+			    window.location = '#{{ anchor }}'
+			});
+		</script>
+	{% endif %}
 	<script>
 		$(document).ready(function(){
 			$(function(){
@@ -782,7 +789,7 @@
 			var itemInvoiceNo = $(e.relatedTarget).data('item-invoice-no');
 			var itemTradeContractor = $(e.relatedTarget).data('item-trade-contractor');
 			var itemContractorPaid = $(e.relatedTarget).data('item-contractor-paid');
-			var itemContractorPaidDate = new Date($(e.relatedTarget).data('item-contractor-paid-date'));
+			var itemContractorPaidDate = new Date($(e.relatedTarget).data('item-contractor-paid-date').replace(/-/g, '\/'));
 			var itemAllocation = $(e.relatedTarget).data('item-allocation'); 
 			var itemTaskName = $(e.relatedTarget).data('item-task-name'); 
 			var itemTaskId = $(e.relatedTarget).data('item-task-id'); 
@@ -809,7 +816,7 @@
 			var highestQuote = $(e.relatedTarget).data('task-highest-quote');
 			var clientCharged = $(e.relatedTarget).data('task-client-charged');
 			var paymentReceived = $(e.relatedTarget).data('task-payment-received'); 
-			var paymentDate = new Date($(e.relatedTarget).data('task-payment-date')); 
+			var paymentDate = new Date($(e.relatedTarget).data('task-payment-date').replace(/-/g, '\/')); 
 			var day = ("0" + paymentDate.getDate()).slice(-2);
 			var month = ("0" + (paymentDate.getMonth() + 1)).slice(-2);
 			var date = paymentDate.getFullYear()+"-"+(month)+"-"+(day);
